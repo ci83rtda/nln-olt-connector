@@ -52,16 +52,25 @@ class ChangeWifiSettings extends Command
                     ];
                 }
             } else {
-                $wifiSettings[$i] = [
-                    'ssid' => $this->ask("Enter the new WiFi SSID for SSID $i", $currentSettings[$i]['ssid']),
-                    'shared_key' => $this->ask("Enter the new WiFi shared key for SSID $i", $currentSettings[$i]['shared_key']),
-                    'state' => $this->choice("Enable or disable WiFi SSID $i?", ['enable', 'disable', 'no change'], 'no change'),
-                ];
-
-                if ($wifiSettings[$i]['state'] === 'no change') {
-                    $wifiSettings[$i]['state'] = null;
+                $stateChoice = $this->choice("Enable, disable, or no change for WiFi SSID $i?", ['enable', 'disable', 'no change'], 'no change');
+                if ($stateChoice === 'disable') {
+                    $wifiSettings[$i] = [
+                        'ssid' => null,
+                        'shared_key' => null,
+                        'state' => false,
+                    ];
+                } elseif ($stateChoice === 'enable') {
+                    $wifiSettings[$i] = [
+                        'ssid' => $this->ask("Enter the new WiFi SSID for SSID $i", $currentSettings[$i]['ssid']),
+                        'shared_key' => $this->ask("Enter the new WiFi shared key for SSID $i", $currentSettings[$i]['shared_key']),
+                        'state' => true,
+                    ];
                 } else {
-                    $wifiSettings[$i]['state'] = $wifiSettings[$i]['state'] === 'enable';
+                    $wifiSettings[$i] = [
+                        'ssid' => null,
+                        'shared_key' => null,
+                        'state' => null,
+                    ];
                 }
             }
         }
