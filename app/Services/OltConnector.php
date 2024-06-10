@@ -33,12 +33,16 @@ class OltConnector
 
     public function executeCommand($command, $expectOutput = true)
     {
+        Log::info("Executing command: $command");
         $this->ssh->write("$command\n");
         if ($expectOutput) {
-            return $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
+            $response = $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
+            Log::info("Command response: $response");
+            return $response;
         } else {
             // Wait until the prompt returns
-            $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
+            $response = $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
+            Log::info("Command response: $response");
             return '';
         }
     }
@@ -72,6 +76,30 @@ class OltConnector
         $this->closeConnection();
 
         return $pendingOnus;
+    }
+
+    public function addOnu($port, $serialNumber, $params)
+    {
+        $this->executeCommand('enable', false);
+        $this->ssh->write($this->enablePassword . "\n");
+        $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
+        $this->executeCommand('configure terminal', false);
+        $this->executeCommand("interface gpon 0/$port", false);
+
+        // Fetch existing ONUs to find an available ID
+        $existingOnusOutput = $this->executeCommand('show onu info');
+        $existingOnus = OltHelper::parseExistingOnusOutput($existingOnusOutput);
+
+        // Find the first available ONU ID
+        $availableOnuId = 1;
+        while (array_key_exists($availableOnuId, $existingOnus)) {
+            $availableOnuId++;
+        }
+
+        // Delegate the ONU addition to the helper class
+        OltHelper::addOnu($this, $availableOnuId, $serialNumber, $params);
+
+        $this->closeConnection();
     }
 
     public function closeConnection()
