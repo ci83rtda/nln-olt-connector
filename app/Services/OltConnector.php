@@ -14,11 +14,11 @@ class OltConnector
 
     public function __construct($host, $username, $password, $enablePassword)
     {
-        Log::info("Start session: ".now()->toAtomString());
+        Log::info("****Start session: ".now()->toAtomString());
         $this->ssh = new SSH2($host);
         $this->enablePassword = $enablePassword;
 
-        $this->ssh->setTimeout(10);
+        $this->ssh->setTimeout(5);
 
         // Initial login
         if (!$this->ssh->login($username, $password)) {
