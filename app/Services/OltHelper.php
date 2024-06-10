@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Log;
+use phpseclib3\Net\SSH2;
 
 class OltHelper
 {
@@ -145,7 +146,10 @@ class OltHelper
 
     public static function getCurrentWifiSettings($oltConnector, $port, $onuId)
     {
-        // Enter the configuration context for the specific GPON port
+        // Enable and enter the configuration context for the specific GPON port
+        $oltConnector->executeCommand('enable', false);
+        $oltConnector->ssh->write($oltConnector->enablePassword . "\n");
+        $oltConnector->ssh->read('/#\s*/', SSH2::READ_REGEX);
         $oltConnector->executeCommand('configure terminal', false);
         $oltConnector->executeCommand("interface gpon 0/$port", false);
 
@@ -162,7 +166,6 @@ class OltHelper
 
         // Exit configuration mode
         $oltConnector->executeCommand('!', false);
-        $oltConnector->executeCommand('write memory', false);
 
         return $wifiSettings;
     }
