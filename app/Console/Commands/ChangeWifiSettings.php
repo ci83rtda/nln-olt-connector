@@ -35,16 +35,34 @@ class ChangeWifiSettings extends Command
 
         $wifiSettings = [];
         for ($i = 1; $i <= 8; $i++) {
-            $wifiSettings[$i] = [
-                'ssid' => $this->ask("Enter the new WiFi SSID for SSID $i", $currentSettings[$i]['ssid']),
-                'shared_key' => $this->ask("Enter the new WiFi shared key for SSID $i", $currentSettings[$i]['shared_key']),
-                'state' => $this->choice("Enable or disable WiFi SSID $i?", ['enable', 'disable', 'no change'], 'no change'),
-            ];
-
-            if ($wifiSettings[$i]['state'] === 'no change') {
-                $wifiSettings[$i]['state'] = null;
+            $currentState = $currentSettings[$i]['state'];
+            if ($currentState === false) {
+                $enableWifi = $this->confirm("WiFi SSID $i is currently disabled. Do you want to enable it?", false);
+                if ($enableWifi) {
+                    $wifiSettings[$i] = [
+                        'ssid' => $this->ask("Enter the new WiFi SSID for SSID $i"),
+                        'shared_key' => $this->ask("Enter the new WiFi shared key for SSID $i"),
+                        'state' => true,
+                    ];
+                } else {
+                    $wifiSettings[$i] = [
+                        'ssid' => null,
+                        'shared_key' => null,
+                        'state' => null,
+                    ];
+                }
             } else {
-                $wifiSettings[$i]['state'] = $wifiSettings[$i]['state'] === 'enable';
+                $wifiSettings[$i] = [
+                    'ssid' => $this->ask("Enter the new WiFi SSID for SSID $i", $currentSettings[$i]['ssid']),
+                    'shared_key' => $this->ask("Enter the new WiFi shared key for SSID $i", $currentSettings[$i]['shared_key']),
+                    'state' => $this->choice("Enable or disable WiFi SSID $i?", ['enable', 'disable', 'no change'], 'no change'),
+                ];
+
+                if ($wifiSettings[$i]['state'] === 'no change') {
+                    $wifiSettings[$i]['state'] = null;
+                } else {
+                    $wifiSettings[$i]['state'] = $wifiSettings[$i]['state'] === 'enable';
+                }
             }
         }
 
