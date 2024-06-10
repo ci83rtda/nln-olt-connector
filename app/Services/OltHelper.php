@@ -115,11 +115,20 @@ class OltHelper
         $oltConnector->executeCommand('write memory', false);
     }
 
-    public static function getCurrentWifiSettings($oltConnector, $port, $onuId)
+    public static function getCurrentWifiSettings($oltConnector, $port, $onuId, $model)
     {
-        // Get current WiFi settings for SSIDs 1-8
+        // Get current WiFi switch settings
+        $wifiSwitchSettings = [];
+        $bands = $model === 'VSOLV452' ? [1, 2] : [1];
+        foreach ($bands as $band) {
+            $output = $oltConnector->executeCommand("show onu $onuId pri wifi_switch $band");
+            $wifiSwitchSettings[$band] = self::parseWifiState($output);
+        }
+
+        // Get current WiFi settings for SSIDs
+        $ssidRange = $model === 'VSOLV642' ? range(1, 4) : range(1, 8);
         $wifiSettings = [];
-        for ($i = 1; $i <= 8; $i++) {
+        foreach ($ssidRange as $i) {
             $output = $oltConnector->executeCommand("show onu $onuId pri wifi_ssid $i");
             $wifiSettings[$i] = [
                 'ssid' => self::parseWifiSsid($output),
@@ -128,7 +137,10 @@ class OltHelper
             ];
         }
 
-        return $wifiSettings;
+        return [
+            'wifi_switch' => $wifiSwitchSettings,
+            'ssid' => $wifiSettings
+        ];
     }
 
     private static function parseWifiSsid($output)
@@ -146,35 +158,34 @@ class OltHelper
     private static function parseWifiState($output)
     {
         preg_match('/Status\s+:\s+(Enable|Disable)/', $output, $matches);
-        return isset($matches[1]) ? ($matches[1] === 'Enable') : null;
+        return isset($matches[1]) ? ($matches[1] === 'Enable' ? 'enable' : 'disable') : null;
     }
 
     public static function changeWifiSettings($oltConnector, $port, $onuId, $wifiSettings, $wifiSwitchSettings, $model)
     {
         foreach ($wifiSwitchSettings as $switch => $state) {
-            if ($state === 'enable') {
-                if ($model === 'VSOLV452') {
-                    $command = ($switch === 1) ?
-                        "onu $onuId pri wifi_switch 1 enable fcc auto 80211ac0 20 40" :
-                        "onu $onuId pri wifi_switch 2 enable fcc channel 0 80211bgn 20";
-                } else {
-                    $command = "onu $onuId pri wifi_switch 1 enable fcc channel 0 80211bgn 20 20/40";
+            if ($state !== 'no change') {
+                if ($state === 'enable') {
+                    if ($model === 'VSOLV452') {
+                        $command = ($switch === 1) ?
+                            "onu $onuId pri wifi_switch 1 enable fcc auto 80211ac0 20 40" :
+                            "onu $onuId pri wifi_switch 2 enable fcc channel 0 80211bgn 20";
+                    } else {
+                        $command = "onu $onuId pri wifi_switch 1 enable fcc channel 0 80211bgn 20 20/40";
+                    }
+                } elseif ($state === 'disable') {
+                    $command = "onu $onuId pri wifi_switch $switch disable";
                 }
-                $oltConnector->executeCommand($command, false);
-            } elseif ($state === 'disable') {
-                $command = "onu $onuId pri wifi_switch $switch disable";
                 $oltConnector->executeCommand($command, false);
             }
         }
 
         foreach ($wifiSettings as $id => $settings) {
             // Update WiFi SSID if provided
-            if ($settings['ssid'] !== null) {
+            if ($settings['state'] === 'enable') {
                 $oltConnector->executeCommand("onu $onuId pri wifi_ssid $id name {$settings['ssid']} hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$settings['shared_key']} rekey_interval 0", false);
-            } elseif ($settings['shared_key'] !== null) {
-                // Update WiFi shared key if provided (assuming SSID remains the same)
-                $currentSsid = self::parseWifiSsid($oltConnector->executeCommand("show onu $onuId pri wifi_ssid $id"));
-                $oltConnector->executeCommand("onu $onuId pri wifi_ssid $id name $currentSsid hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$settings['shared_key']} rekey_interval 0", false);
+            } elseif ($settings['state'] === 'disable') {
+                $oltConnector->executeCommand("onu $onuId pri wifi_ssid $id disable", false);
             }
         }
     }
