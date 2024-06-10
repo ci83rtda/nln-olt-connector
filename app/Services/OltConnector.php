@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use phpseclib3\Net\SSH2;
 
 class OltConnector
@@ -22,7 +23,10 @@ class OltConnector
 
     public function executeCommand($command)
     {
-        return $this->ssh->exec($command);
+        Log::info("Executing command: $command");
+        $output = $this->ssh->exec($command);
+        Log::info("Command output: $output");
+        return $output;
     }
 
     public function fetchPendingOnus()
