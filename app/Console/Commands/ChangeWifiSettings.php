@@ -30,54 +30,50 @@ class ChangeWifiSettings extends Command
         $port = $this->askWithValidation('Enter the GPON port number (e.g., 5)');
         $onuId = $this->askWithValidation('Enter the ONU ID (e.g., 28)');
 
+        // Determine the ONU model
+        $equid = $oltConnector->executeCommand("onu $onuId pri equid");
+        $model = $this->parseModel($equid);
+
         // Fetch current WiFi settings
         $currentSettings = $oltConnector->getCurrentWifiSettings($port, $onuId);
 
+        // Determine the range of SSIDs to configure based on the model
+        $ssidRange = $model === 'VSOLV642' ? range(1, 4) : range(1, 8);
+
         $wifiSettings = [];
-        for ($i = 1; $i <= 8; $i++) {
+        foreach ($ssidRange as $i) {
             $currentState = $currentSettings[$i]['state'];
-            if ($currentState === false) {
-                $enableWifi = $this->confirm("WiFi SSID $i is currently disabled. Do you want to enable it?", false);
-                if ($enableWifi) {
-                    $wifiSettings[$i] = [
-                        'ssid' => $this->ask("Enter the new WiFi SSID for SSID $i"),
-                        'shared_key' => $this->ask("Enter the new WiFi shared key for SSID $i"),
-                        'state' => true,
-                    ];
-                } else {
-                    $wifiSettings[$i] = [
-                        'ssid' => null,
-                        'shared_key' => null,
-                        'state' => null,
-                    ];
-                }
+            $wifiSettings[$i] = [
+                'state' => $this->choice("Enable, disable, or no change for WiFi SSID $i?", ['enable', 'disable', 'no change'], 'no change')
+            ];
+
+            if ($wifiSettings[$i]['state'] === 'enable') {
+                $wifiSettings[$i]['ssid'] = $this->ask("Enter the new WiFi SSID for SSID $i", $currentSettings[$i]['ssid']);
+                $wifiSettings[$i]['shared_key'] = $this->ask("Enter the new WiFi shared key for SSID $i", $currentSettings[$i]['shared_key']);
+            } elseif ($wifiSettings[$i]['state'] === 'no change' && $currentState !== false) {
+                $wifiSettings[$i]['ssid'] = $this->ask("Enter the WiFi SSID for SSID $i", $currentSettings[$i]['ssid']);
+                $wifiSettings[$i]['shared_key'] = $this->ask("Enter the WiFi shared key for SSID $i", $currentSettings[$i]['shared_key']);
             } else {
-                $stateChoice = $this->choice("Enable, disable, or no change for WiFi SSID $i?", ['enable', 'disable', 'no change'], 'no change');
-                if ($stateChoice === 'disable') {
-                    $wifiSettings[$i] = [
-                        'ssid' => null,
-                        'shared_key' => null,
-                        'state' => false,
-                    ];
-                } elseif ($stateChoice === 'enable') {
-                    $wifiSettings[$i] = [
-                        'ssid' => $this->ask("Enter the new WiFi SSID for SSID $i", $currentSettings[$i]['ssid']),
-                        'shared_key' => $this->ask("Enter the new WiFi shared key for SSID $i", $currentSettings[$i]['shared_key']),
-                        'state' => true,
-                    ];
-                } else {
-                    $wifiSettings[$i] = [
-                        'ssid' => $this->ask("Enter the WiFi SSID for SSID $i", $currentSettings[$i]['ssid']),
-                        'shared_key' => $this->ask("Enter the WiFi shared key for SSID $i", $currentSettings[$i]['shared_key']),
-                        'state' => null,
-                    ];
-                }
+                $wifiSettings[$i]['ssid'] = null;
+                $wifiSettings[$i]['shared_key'] = null;
             }
+        }
+
+        $wifiSwitchSettings = [];
+        if ($model === 'VSOLV452') {
+            $wifiSwitchSettings = [
+                1 => $this->choice("Enable, disable, or no change for 2.4 GHz WiFi switch?", ['enable', 'disable', 'no change'], 'no change'),
+                2 => $this->choice("Enable, disable, or no change for 5.0 GHz WiFi switch?", ['enable', 'disable', 'no change'], 'no change')
+            ];
+        } else {
+            $wifiSwitchSettings = [
+                1 => $this->choice("Enable, disable, or no change for 2.4 GHz WiFi switch?", ['enable', 'disable', 'no change'], 'no change')
+            ];
         }
 
         try {
             Log::info('Attempting to change WiFi settings for ONU');
-            $oltConnector->changeWifiSettings($port, $onuId, $wifiSettings);
+            $oltConnector->changeWifiSettings($port, $onuId, $wifiSettings, $wifiSwitchSettings, $model);
             Log::info('WiFi settings changed successfully.');
             $this->info('WiFi settings changed successfully.');
         } catch (\Exception $e) {
@@ -98,5 +94,11 @@ class ChangeWifiSettings extends Command
         } while (empty($response));
 
         return $response;
+    }
+
+    private function parseModel($equidOutput)
+    {
+        preg_match('/equid\s+([^\s]+)/', $equidOutput, $matches);
+        return $matches[1] ?? 'unknown';
     }
 }

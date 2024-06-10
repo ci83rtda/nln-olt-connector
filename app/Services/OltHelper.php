@@ -134,7 +134,7 @@ class OltHelper
         }
 
         // Exit configuration mode
-        $oltConnector->executeCommand('!', false);
+        $oltConnector->executeCommand('exit', false);
 
         return $wifiSettings;
     }
@@ -157,18 +157,34 @@ class OltHelper
         return isset($matches[1]) ? ($matches[1] === 'Enable') : null;
     }
 
-    public static function changeWifiSettings($oltConnector, $port, $onuId, $wifiSettings)
+    public static function changeWifiSettings($oltConnector, $port, $onuId, $wifiSettings, $wifiSwitchSettings, $model)
     {
         // Enable and enter the configuration context for the specific GPON port
         $oltConnector->enable();
         $oltConnector->executeCommand('configure terminal', false);
         $oltConnector->executeCommand("interface gpon 0/$port", false);
 
+        foreach ($wifiSwitchSettings as $switch => $state) {
+            if ($state === 'enable') {
+                if ($model === 'VSOLV452') {
+                    $command = ($switch === 1) ?
+                        "onu $onuId pri wifi_switch 1 enable fcc auto 80211ac0 20 40" :
+                        "onu $onuId pri wifi_switch 2 enable fcc channel 0 80211bgn 20";
+                } else {
+                    $command = "onu $onuId pri wifi_switch 1 enable fcc channel 0 80211bgn 20 20/40";
+                }
+                $oltConnector->executeCommand($command, false);
+            } elseif ($state === 'disable') {
+                $command = "onu $onuId pri wifi_switch $switch disable";
+                $oltConnector->executeCommand($command, false);
+            }
+        }
+
         foreach ($wifiSettings as $id => $settings) {
             // Toggle WiFi state if provided
             if ($settings['state'] !== null) {
                 $state = $settings['state'] ? 'enable' : 'disable';
-                $oltConnector->executeCommand("onu $onuId pri wifi_ssid $id $state fcc auto 80211acANAC 20 40", false);
+                $oltConnector->executeCommand("onu $onuId pri wifi_switch $id $state fcc auto 80211acANAC 20 40", false);
             }
 
             // Update WiFi SSID if provided
@@ -182,7 +198,7 @@ class OltHelper
         }
 
         // Exit configuration mode
-        $oltConnector->executeCommand('!', false);
+        $oltConnector->executeCommand('exit', false);
         $oltConnector->executeCommand('write memory', false);
     }
 
