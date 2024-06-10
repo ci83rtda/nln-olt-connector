@@ -117,11 +117,6 @@ class OltHelper
 
     public static function getCurrentWifiSettings($oltConnector, $port, $onuId)
     {
-        // Enable and enter the configuration context for the specific GPON port
-        $oltConnector->enable();
-        $oltConnector->executeCommand('configure terminal', false);
-        $oltConnector->executeCommand("interface gpon 0/$port", false);
-
         // Get current WiFi settings for SSIDs 1-8
         $wifiSettings = [];
         for ($i = 1; $i <= 8; $i++) {
@@ -132,9 +127,6 @@ class OltHelper
                 'state' => self::parseWifiState($output),
             ];
         }
-
-        // Exit configuration mode
-        $oltConnector->executeCommand('exit', false);
 
         return $wifiSettings;
     }
@@ -159,11 +151,6 @@ class OltHelper
 
     public static function changeWifiSettings($oltConnector, $port, $onuId, $wifiSettings, $wifiSwitchSettings, $model)
     {
-        // Enable and enter the configuration context for the specific GPON port
-        $oltConnector->enable();
-        $oltConnector->executeCommand('configure terminal', false);
-        $oltConnector->executeCommand("interface gpon 0/$port", false);
-
         foreach ($wifiSwitchSettings as $switch => $state) {
             if ($state === 'enable') {
                 if ($model === 'VSOLV452') {
@@ -181,12 +168,6 @@ class OltHelper
         }
 
         foreach ($wifiSettings as $id => $settings) {
-            // Toggle WiFi state if provided
-            if ($settings['state'] !== null) {
-                $state = $settings['state'] ? 'enable' : 'disable';
-                $oltConnector->executeCommand("onu $onuId pri wifi_switch $id $state fcc auto 80211acANAC 20 40", false);
-            }
-
             // Update WiFi SSID if provided
             if ($settings['ssid'] !== null) {
                 $oltConnector->executeCommand("onu $onuId pri wifi_ssid $id name {$settings['ssid']} hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$settings['shared_key']} rekey_interval 0", false);
@@ -196,10 +177,6 @@ class OltHelper
                 $oltConnector->executeCommand("onu $onuId pri wifi_ssid $id name $currentSsid hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$settings['shared_key']} rekey_interval 0", false);
             }
         }
-
-        // Exit configuration mode
-        $oltConnector->executeCommand('exit', false);
-        $oltConnector->executeCommand('write memory', false);
     }
 
 }

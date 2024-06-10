@@ -30,6 +30,11 @@ class ChangeWifiSettings extends Command
         $port = $this->askWithValidation('Enter the GPON port number (e.g., 5)');
         $onuId = $this->askWithValidation('Enter the ONU ID (e.g., 28)');
 
+        // Enable and enter the configuration context for the specific GPON port
+        $oltConnector->enable();
+        $oltConnector->executeCommand('configure terminal', false);
+        $oltConnector->executeCommand("interface gpon 0/$port", false);
+
         // Determine the ONU model
         $equid = $oltConnector->executeCommand("onu $onuId pri equid");
         $model = $this->parseModel($equid);
@@ -80,6 +85,10 @@ class ChangeWifiSettings extends Command
             Log::error('Error changing WiFi settings: ' . $e->getMessage());
             $this->error('Failed to change WiFi settings. Check logs for details.');
         }
+
+        // Exit configuration mode
+        $oltConnector->executeCommand('exit', false);
+        $oltConnector->executeCommand('write memory', false);
 
         return 0;
     }
