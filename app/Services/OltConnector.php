@@ -28,21 +28,14 @@ class OltConnector
         $this->ssh->write("$username\n");
         $this->ssh->read('/Password:\s*/');
         $this->ssh->write("$password\n");
-        $loginOutput = $this->ssh->read('/#\s*/');
-
-        if (strpos($loginOutput, 'User Access Verification') !== false) {
-            throw new \Exception('User Access Verification login failed');
-        }
+        $this->ssh->read('/#\s*/');
     }
 
     public function executeCommand($command, $expectOutput = true)
     {
-        Log::info("Executing command: $command");
         $this->ssh->write("$command\n");
         if ($expectOutput) {
-            $output = $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
-            Log::info("Command output: $output");
-            return $output;
+            return $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
         } else {
             // Wait until the prompt returns
             $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
