@@ -24,7 +24,7 @@ class AddOnu extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(OltConnector $oltConnector)
     {
         $port = $this->ask('Enter the GPON port number (e.g., 5)');
         $serialNumber = $this->ask('Enter the ONU serial number (e.g., GPON009777F0)');
@@ -53,7 +53,7 @@ class AddOnu extends Command
             return 1;
         }
 
-        $oltConnector = new OltConnector('olt_host', 'username', 'password', 'enable_password');
+
         $oltConnector->addOnu($port, $serialNumber, $params);
 
         $this->info('ONU added successfully.');
