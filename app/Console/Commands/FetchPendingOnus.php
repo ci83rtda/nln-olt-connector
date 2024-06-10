@@ -31,8 +31,6 @@ class FetchPendingOnus extends Command
         // Fetch pending ONUs from the OLT
         $pendingOnus = $oltConnector->fetchPendingOnus();
 
-        dd($pendingOnus);
-
         if (empty($pendingOnus)) {
             $this->info('No pending ONUs found.');
             return 0;
