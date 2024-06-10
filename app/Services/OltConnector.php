@@ -14,11 +14,10 @@ class OltConnector
 
     public function __construct($host, $username, $password, $enablePassword)
     {
-        Log::info("****Start session: ".now()->toAtomString());
         $this->ssh = new SSH2($host);
         $this->enablePassword = $enablePassword;
 
-        $this->ssh->setTimeout(5);
+        $this->ssh->setTimeout(10);
 
         // Initial login
         if (!$this->ssh->login($username, $password)) {
@@ -27,40 +26,42 @@ class OltConnector
 
         // User Access Verification
         $this->ssh->write("$username\n");
-        $this->ssh->read();
+        $this->ssh->read('/Password:\s*/');
         $this->ssh->write("$password\n");
-        $loginOutput = $this->ssh->read('/#\s/');
+        $loginOutput = $this->ssh->read('/#\s*/');
 
         if (strpos($loginOutput, 'User Access Verification') !== false) {
             throw new \Exception('User Access Verification login failed');
         }
     }
 
-    public function executeCommand($command, $interactive = false)
+    public function executeCommand($command, $expectOutput = true)
     {
         Log::info("Executing command: $command");
-        if ($interactive) {
-            $this->ssh->write("$command\n");
-            $output = $this->ssh->read('/#\s/');
+        $this->ssh->write("$command\n");
+        if ($expectOutput) {
+            $output = $this->ssh->read('/#\s*/');
+            Log::info("Command output: $output");
+            return $output;
         } else {
-            $output = $this->ssh->exec($command);
+            // Adding a small delay to ensure the command is processed
+            sleep(1);
+            return '';
         }
-        Log::info("Command output: $output");
-        return $output;
     }
 
     public function fetchPendingOnus()
     {
-        $this->executeCommand('enable', true);
+        $this->executeCommand('enable', false);
         $this->ssh->write($this->enablePassword . "\n");
-        $this->ssh->read('/#\s/');
-        $this->executeCommand('configure terminal', true);
+        $this->ssh->read('/#\s*/');
+        $this->executeCommand('configure terminal', false);
 
         $pendingOnus = [];
 
         for ($port = 1; $port <= 8; $port++) {
-            $this->executeCommand("interface gpon 0/$port", true);
-            $output = $this->executeCommand('show onu auto-find', true);
+            $this->executeCommand("interface gpon 0/$port", false);
+            $output = $this->executeCommand('show onu auto-find');
 
             if (strpos($output, 'No related information to show') === false) {
                 $onus = OltHelper::parseOnuAutoFindOutput($output);
