@@ -67,8 +67,8 @@ class ChangeWifiSettings extends Command
                     ];
                 } else {
                     $wifiSettings[$i] = [
-                        'ssid' => null,
-                        'shared_key' => null,
+                        'ssid' => $this->ask("Enter the WiFi SSID for SSID $i", $currentSettings[$i]['ssid']),
+                        'shared_key' => $this->ask("Enter the WiFi shared key for SSID $i", $currentSettings[$i]['shared_key']),
                         'state' => null,
                     ];
                 }
