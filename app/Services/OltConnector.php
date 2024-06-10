@@ -21,38 +21,42 @@ class OltConnector
         $this->enablePassword = $enablePassword;
     }
 
-    public function executeCommand($command)
+    public function executeCommand($command, $interactive = false)
     {
         Log::info("Executing command: $command");
-        $output = $this->ssh->exec($command);
+        if ($interactive) {
+            $this->ssh->write("$command\n");
+            $output = $this->ssh->read('/#\s/');
+        } else {
+            $output = $this->ssh->exec($command);
+        }
         Log::info("Command output: $output");
         return $output;
     }
 
     public function fetchPendingOnus()
     {
-        $this->executeCommand('enable');
+        $this->executeCommand('enable', true);
         $this->ssh->write($this->enablePassword . "\n");
-        $this->executeCommand('configure terminal');
+        $this->ssh->read('/#\s/');
+        $this->executeCommand('configure terminal', true);
 
         $pendingOnus = [];
-        $data = '';
 
         for ($port = 1; $port <= 8; $port++) {
-            $this->executeCommand("interface gpon 0/$port");
-            $output = $this->executeCommand('show onu auto-find');
-            $data .= $output;
+            $this->executeCommand("interface gpon 0/$port", true);
+            $output = $this->executeCommand('show onu auto-find', true);
 
-            $onus = OltHelper::parseOnuAutoFindOutput($output);
+            if (strpos($output, 'No related information to show') === false) {
+                $onus = OltHelper::parseOnuAutoFindOutput($output);
 
-            foreach ($onus as &$onu) {
-                $onu['Port'] = "0/$port";
+                foreach ($onus as &$onu) {
+                    $onu['Port'] = "0/$port";
+                }
+
+                $pendingOnus = array_merge($pendingOnus, $onus);
             }
-
-            $pendingOnus = array_merge($pendingOnus, $onus);
         }
-
-        dd($data);
 
         Cache::put('pending_onus', $pendingOnus);
 
