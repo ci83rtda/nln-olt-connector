@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\OltConnector;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class AddOnu extends Command
 {
@@ -26,25 +27,23 @@ class AddOnu extends Command
      */
     public function handle(OltConnector $oltConnector)
     {
-        $port = $this->ask('Enter the GPON port number (e.g., 5)');
-        $serialNumber = $this->ask('Enter the ONU serial number (e.g., GPON009777F0)');
+        $port = $this->askWithValidation('Enter the GPON port number (e.g., 5)');
+        $serialNumber = $this->askWithValidation('Enter the ONU serial number (e.g., GPON009777F0)');
         $onuType = $this->determineOnuType($serialNumber);
 
         $params = [];
-        $params['description'] = $this->ask('Enter the description');
-        $params['vlanid'] = $this->ask('Enter the VLAN ID');
+        $params['description'] = $this->askWithValidation('Enter the description');
+        $params['vlanid'] = $this->askWithValidation('Enter the VLAN ID');
 
         if ($onuType === 'vsol') {
-            $params['model'] = $this->ask('Enter the model number');
-            $params['ip'] = $this->ask('Enter the static IP address');
-            $params['mask'] = $this->ask('Enter the subnet mask');
-            $params['gw'] = $this->ask('Enter the gateway IP address');
-            $params['dns_master'] = $this->ask('Enter the primary DNS server');
-            $params['dns_slave'] = $this->ask('Enter the secondary DNS server');
-            $params['wifi_ssid_1'] = $this->ask('Enter the first WiFi SSID');
-            $params['shared_key_1'] = $this->ask('Enter the first WiFi shared key');
-            $params['wifi_ssid_2'] = $this->ask('Enter the second WiFi SSID');
-            $params['shared_key_2'] = $this->ask('Enter the second WiFi shared key');
+            $params['model'] = $this->askWithValidation('Enter the model number');
+            $params['ip'] = $this->askWithValidation('Enter the static IP address');
+            $params['mask'] = $this->askWithValidation('Enter the subnet mask');
+            $params['gw'] = $this->askWithValidation('Enter the gateway IP address');
+            $params['dns_master'] = $this->askWithValidation('Enter the primary DNS server');
+            $params['dns_slave'] = $this->askWithValidation('Enter the secondary DNS server');
+            $params['wifi_ssid'] = $this->askWithValidation('Enter the WiFi SSID');
+            $params['shared_key'] = $this->askWithValidation('Enter the WiFi shared key');
             $params['catv'] = $this->choice('Enable CATV?', ['enable', 'disable'], 'disable');
         } elseif ($onuType === 'huawei') {
             $params['video'] = $this->choice('Enable video?', ['enable', 'disable'], 'disable');
@@ -53,11 +52,29 @@ class AddOnu extends Command
             return 1;
         }
 
+        try {
+            Log::info('Attempting to connect to OLT');
+            $oltConnector->addOnu($port, $serialNumber, $params);
+            Log::info('Connected to OLT, adding ONU');
+            $this->info('ONU added successfully.');
+        } catch (\Exception $e) {
+            Log::error('Error adding ONU: ' . $e->getMessage());
+            $this->error('Failed to add ONU. Check logs for details.');
+        }
 
-        $oltConnector->addOnu($port, $serialNumber, $params);
-
-        $this->info('ONU added successfully.');
         return 0;
+    }
+
+    private function askWithValidation($question)
+    {
+        do {
+            $response = $this->ask($question);
+            if (empty($response)) {
+                $this->error('This field is required.');
+            }
+        } while (empty($response));
+
+        return $response;
     }
 
     private function determineOnuType($serialNumber)

@@ -60,6 +60,10 @@ class OltHelper
         } elseif ($onuType === 'huawei') {
             self::addHuaweiOnu($oltConnector, $onuId, $serialNumber, $params);
         }
+
+        // Exit configuration mode and save the configuration
+        $oltConnector->executeCommand('exit', false);
+        $oltConnector->executeCommand('write memory', false);
     }
 
     private static function determineOnuType($serialNumber)
@@ -88,8 +92,8 @@ class OltHelper
         $oltConnector->executeCommand("onu $onuId pri wan_adv index 1 route ipv4 static ip {$params['ip']} mask {$params['mask']} gw {$params['gw']} dns master {$params['dns_master']} slave {$params['dns_slave']} nat enable", false);
         $oltConnector->executeCommand("onu $onuId pri wan_adv index 1 vlan tag wan_vlan {$params['vlanid']} 0", false);
         $oltConnector->executeCommand("onu $onuId pri wan_adv index 1 bind lan1 lan2 ssid1 ssid2 ssid3 ssid4", false);
-        $oltConnector->executeCommand("onu $onuId pri wifi_ssid 1 name {$params['wifi_ssid_1']} hide disable auth_mode wpapsk/wpa2psk encrypt_type tkipaes shared_key {$params['shared_key_1']} rekey_interval 0", false);
-        $oltConnector->executeCommand("onu $onuId pri wifi_ssid 2 name {$params['wifi_ssid_2']} hide disable auth_mode wpapsk/wpa2psk encrypt_type tkipaes shared_key {$params['shared_key_2']} rekey_interval 0", false);
+        $oltConnector->executeCommand("onu $onuId pri wifi_ssid 1 name {$params['wifi_ssid_1']} hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$params['shared_key_1']} rekey_interval 0", false);
+        $oltConnector->executeCommand("onu $onuId pri wifi_ssid 2 name {$params['wifi_ssid_2']} hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$params['shared_key_2']} rekey_interval 0", false);
         $oltConnector->executeCommand("onu $onuId pri firewall level low", false);
         $oltConnector->executeCommand("onu $onuId pri acl ping control enable lan enable wan enable ipv4_control disable ipv6_control disable", false);
         $oltConnector->executeCommand("onu $onuId pri catv {$params['catv']}", false);
