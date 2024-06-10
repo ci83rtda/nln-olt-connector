@@ -40,12 +40,12 @@ class OltConnector
         Log::info("Executing command: $command");
         $this->ssh->write("$command\n");
         if ($expectOutput) {
-            $output = $this->ssh->read('/#\s*/');
+            $output = $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
             Log::info("Command output: $output");
             return $output;
         } else {
-            // Adding a small delay to ensure the command is processed
-            sleep(1);
+            // Wait until the prompt returns
+            $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
             return '';
         }
     }
@@ -54,7 +54,7 @@ class OltConnector
     {
         $this->executeCommand('enable', false);
         $this->ssh->write($this->enablePassword . "\n");
-        $this->ssh->read('/#\s*/');
+        $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
         $this->executeCommand('configure terminal', false);
 
         $pendingOnus = [];
