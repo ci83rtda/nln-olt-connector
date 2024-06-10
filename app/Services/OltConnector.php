@@ -48,7 +48,14 @@ class OltConnector
 
         Cache::put('pending_onus', $pendingOnus);
 
+        $this->closeConnection();
+
         return $pendingOnus;
+    }
+
+    public function closeConnection()
+    {
+        $this->ssh->disconnect();
     }
 
 }
