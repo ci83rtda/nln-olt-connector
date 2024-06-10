@@ -13,9 +13,9 @@ class OltHelper
             // Use regex to match the expected format and capture groups
             if (preg_match('/^(GPON\d+\/\d+:\d+)\s+(\S+)\s+(\S+)$/', trim($line), $matches)) {
                 $onus[] = [
-                    'OnuIndex' => $matches[1],
-                    'Sn' => $matches[2],
-                    'State' => $matches[3],
+                    'OnuIndex' => trim($matches[1]),
+                    'Sn' => trim($matches[2]),
+                    'State' => trim($matches[3]),
                 ];
             }
         }
