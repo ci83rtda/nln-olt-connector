@@ -182,7 +182,7 @@ class OltHelper
     private static function parseWifiState($output)
     {
         preg_match('/hide\s+(enable|disable)/', $output, $matches);
-        return $matches[1] === 'enable';
+        return isset($matches[1]) ? $matches[1] === 'enable' : null;
     }
 
 }
