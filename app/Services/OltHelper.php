@@ -12,6 +12,9 @@ class OltHelper
         $onus = [];
 
         foreach ($lines as $line) {
+            // Remove escape characters for cursor movement
+            $line = preg_replace('/\x1B\[[0-9;]*[A-Za-z]/', '', $line);
+
             // Use regex to match the expected format and capture groups
             if (preg_match('/^(GPON\d+\/\d+:\d+)\s+(\S+)\s+(\S+)$/', trim($line), $matches)) {
                 // Log the matched groups for debugging
