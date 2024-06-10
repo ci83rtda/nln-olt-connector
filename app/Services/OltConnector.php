@@ -32,12 +32,10 @@ class OltConnector
         $this->executeCommand('configure terminal');
 
         $pendingOnus = [];
-        $data = '';
 
         for ($port = 1; $port <= 8; $port++) {
             $this->executeCommand("interface gpon 0/$port");
             $output = $this->executeCommand('show onu auto-find');
-            $data .= $output;
 
             $onus = OltHelper::parseOnuAutoFindOutput($output);
 
@@ -47,8 +45,6 @@ class OltConnector
 
             $pendingOnus = array_merge($pendingOnus, $onus);
         }
-
-        dd($data);
 
         Cache::put('pending_onus', $pendingOnus);
 

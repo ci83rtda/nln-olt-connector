@@ -10,7 +10,7 @@ class OltHelper
         $onus = [];
 
         foreach ($lines as $line) {
-            if (preg_match('/^\d+\s+\S+\s+\S+$/', $line)) {
+            if (preg_match('/^GPON\d+\/\d+:\d+\s+\S+\s+\S+$/', trim($line))) {
                 $parts = preg_split('/\s+/', $line);
                 $onus[] = [
                     'OnuIndex' => $parts[0],
