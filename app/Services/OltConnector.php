@@ -14,6 +14,7 @@ class OltConnector
 
     public function __construct($host, $username, $password, $enablePassword)
     {
+        Log::info("Start session: ".now()->toAtomString());
         $this->ssh = new SSH2($host);
         $this->enablePassword = $enablePassword;
 
