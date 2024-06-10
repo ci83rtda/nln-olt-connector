@@ -105,6 +105,13 @@ class OltConnector
         $this->closeConnection();
     }
 
+    public function enable()
+    {
+        $this->executeCommand('enable', false);
+        $this->ssh->write($this->enablePassword . "\n");
+        $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
+    }
+
     public function getCurrentWifiSettings($port, $onuId)
     {
         return OltHelper::getCurrentWifiSettings($this, $port, $onuId);
