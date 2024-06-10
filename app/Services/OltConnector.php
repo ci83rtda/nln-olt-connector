@@ -2,12 +2,15 @@
 
 namespace App\Services;
 
+use App\Traits\SshConnectionTrait;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use phpseclib3\Net\SSH2;
 
 class OltConnector
 {
+
+    use SshConnectionTrait;
 
     protected $ssh;
     protected $enablePassword;
@@ -102,9 +105,9 @@ class OltConnector
         $this->closeConnection();
     }
 
-    public function closeConnection()
+    public function changeWifiSettings($port, $onuId, $wifiSsid, $sharedKey, $wifiSwitchState)
     {
-        $this->ssh->disconnect();
+        OltHelper::changeWifiSettings($this, $port, $onuId, $wifiSsid, $sharedKey, $wifiSwitchState);
     }
 
 }
