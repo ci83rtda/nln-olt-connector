@@ -39,8 +39,6 @@ class OltConnector
             $output = $this->executeCommand('show onu auto-find');
             $data .= $output;
 
-            dd($data);
-
             $onus = OltHelper::parseOnuAutoFindOutput($output);
 
             foreach ($onus as &$onu) {
@@ -49,6 +47,8 @@ class OltConnector
 
             $pendingOnus = array_merge($pendingOnus, $onus);
         }
+
+        dd($data);
 
         Cache::put('pending_onus', $pendingOnus);
 
