@@ -105,9 +105,14 @@ class OltConnector
         $this->closeConnection();
     }
 
-    public function changeWifiSettings($port, $onuId, $wifiSsid, $sharedKey, $wifiSwitchState)
+    public function getCurrentWifiSettings($port, $onuId)
     {
-        OltHelper::changeWifiSettings($this, $port, $onuId, $wifiSsid, $sharedKey, $wifiSwitchState);
+        return OltHelper::getCurrentWifiSettings($this, $port, $onuId);
+    }
+
+    public function changeWifiSettings($port, $onuId, $wifiSettings)
+    {
+        OltHelper::changeWifiSettings($this, $port, $onuId, $wifiSettings);
     }
 
 }

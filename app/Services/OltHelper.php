@@ -169,8 +169,8 @@ class OltHelper
 
     private static function parseWifiSsid($output)
     {
-    preg_match('/name\s+([^\s]+)/', $output, $matches);
-    return $matches[1] ?? null;
+        preg_match('/name\s+([^\s]+)/', $output, $matches);
+        return $matches[1] ?? null;
     }
 
     private static function parseSharedKey($output)
