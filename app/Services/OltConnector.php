@@ -15,10 +15,24 @@ class OltConnector
     public function __construct($host, $username, $password, $enablePassword)
     {
         $this->ssh = new SSH2($host);
-        if (!$this->ssh->login($username, $password)) {
-            throw new \Exception('Login failed');
-        }
         $this->enablePassword = $enablePassword;
+
+        $this->ssh->setTimeout(10);
+
+        // Initial login
+        if (!$this->ssh->login($username, $password)) {
+            throw new \Exception('Initial login failed');
+        }
+
+        // User Access Verification
+        $this->ssh->write("$username\n");
+        $this->ssh->read();
+        $this->ssh->write("$password\n");
+        $loginOutput = $this->ssh->read('/#\s/');
+
+        if (strpos($loginOutput, 'User Access Verification') !== false) {
+            throw new \Exception('User Access Verification login failed');
+        }
     }
 
     public function executeCommand($command, $interactive = false)
