@@ -34,10 +34,10 @@ class AddEditWifiSettings extends Command
         // Fetch WiFi switch settings
         $wifiSwitchSettings = [];
         if ($model === 'V452') {
-            $wifiSwitchSettings[1] = $this->choice('WiFi switch 1 (2.4 GHz): enable, disable, or no change?', ['enable', 'disable', 'no change'], 'no change');
-            $wifiSwitchSettings[2] = $this->choice('WiFi switch 2 (5 GHz): enable, disable, or no change?', ['enable', 'disable', 'no change'], 'no change');
+            $wifiSwitchSettings[1] = $this->choice('WiFi switch 1 (2.4 GHz): enable or disable?', ['enable', 'disable'], 'enable');
+            $wifiSwitchSettings[2] = $this->choice('WiFi switch 2 (5 GHz): enable or disable?', ['enable', 'disable'], 'enable');
         } else {
-            $wifiSwitchSettings[1] = $this->choice('WiFi switch (2.4 GHz): enable, disable, or no change?', ['enable', 'disable', 'no change'], 'no change');
+            $wifiSwitchSettings[1] = $this->choice('WiFi switch (2.4 GHz): enable or disable?', ['enable', 'disable'], 'enable');
         }
 
         // Fetch WiFi SSID settings
@@ -46,10 +46,10 @@ class AddEditWifiSettings extends Command
         foreach ($ssidRange as $i) {
             $frequency = ($i <= 4) ? '2.4 GHz' : '5 GHz';
             $wifiSettings[$i] = [
-                'state' => $this->choice("WiFi SSID $i ($frequency): enable, disable, or no change?", ['enable', 'disable', 'no change'], 'no change')
+                'state' => $this->choice("WiFi SSID $i ($frequency): enable or disable?", ['enable', 'disable'], 'enable')
             ];
 
-            if ($wifiSettings[$i]['state'] === 'enable' || $wifiSettings[$i]['state'] === 'no change') {
+            if ($wifiSettings[$i]['state'] === 'enable') {
                 $wifiSettings[$i]['ssid'] = $this->ask("Enter the WiFi SSID for SSID $i ($frequency)");
                 $wifiSettings[$i]['shared_key'] = $this->ask("Enter the WiFi shared key for SSID $i ($frequency)");
             } else {
