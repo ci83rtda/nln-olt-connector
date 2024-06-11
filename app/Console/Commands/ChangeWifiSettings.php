@@ -48,7 +48,7 @@ class ChangeWifiSettings extends Command
         foreach ($bands as $band) {
             $currentState = $currentSettings["wifi_switch"][$band];
             $options = ($currentState === 'enable') ? ['disable', 'no change'] : ['enable', 'no change'];
-            $wifiSwitchSettings[$band] = $this->choice("Enable, disable, or no change for WiFi switch $band?", $options, 'no change');
+            $wifiSwitchSettings[$band] = $this->choice("Current status for WiFi switch $band is $currentState. Enable, disable, or no change?", $options, 'no change');
         }
 
         // Handle SSID settings
@@ -58,15 +58,15 @@ class ChangeWifiSettings extends Command
             $currentState = $currentSettings["ssid"][$i]['state'];
             $options = ($currentState === 'enable') ? ['disable', 'no change'] : ['enable', 'no change'];
             $wifiSettings[$i] = [
-                'state' => $this->choice("Enable, disable, or no change for WiFi SSID $i?", $options, 'no change')
+                'state' => $this->choice("Current status for WiFi SSID $i is $currentState. Enable, disable, or no change?", $options, 'no change')
             ];
 
             if ($wifiSettings[$i]['state'] === 'enable') {
                 $wifiSettings[$i]['ssid'] = $this->ask("Enter the new WiFi SSID for SSID $i", $currentSettings["ssid"][$i]['ssid']);
                 $wifiSettings[$i]['shared_key'] = $this->ask("Enter the new WiFi shared key for SSID $i", $currentSettings["ssid"][$i]['shared_key']);
-            } elseif ($wifiSettings[$i]['state'] === 'no change' && $currentState !== false) {
-                $wifiSettings[$i]['ssid'] = $this->ask("Enter the WiFi SSID for SSID $i", $currentSettings["ssid"][$i]['ssid']);
-                $wifiSettings[$i]['shared_key'] = $this->ask("Enter the WiFi shared key for SSID $i", $currentSettings["ssid"][$i]['shared_key']);
+            } elseif ($wifiSettings[$i]['state'] === 'no change') {
+                $wifiSettings[$i]['ssid'] = $currentSettings["ssid"][$i]['ssid'];
+                $wifiSettings[$i]['shared_key'] = $currentSettings["ssid"][$i]['shared_key'];
             } else {
                 $wifiSettings[$i]['ssid'] = null;
                 $wifiSettings[$i]['shared_key'] = null;
