@@ -66,7 +66,7 @@ class ChangeWifiSettings extends Command
                 'state' => $this->choice("Current status for WiFi SSID $i is $currentState. Enable, disable, or no change?", $options, 'no change')
             ];
 
-            if ($wifiSettings[$i]['state'] === 'enable' || $wifiSettings[$i]['state'] === 'no change') {
+            if (($wifiSettings[$i]['state'] === 'enable') || ($wifiSettings[$i]['state'] === 'no change' && $currentState === 'enable')) {
                 $wifiSettings[$i]['ssid'] = $this->ask("Enter the new WiFi SSID for SSID $i", $currentSettings["ssid"][$i]['ssid'] ?? '');
                 $wifiSettings[$i]['shared_key'] = $this->ask("Enter the new WiFi shared key for SSID $i", $currentSettings["ssid"][$i]['shared_key'] ?? '');
             } else {
