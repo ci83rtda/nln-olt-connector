@@ -38,14 +38,34 @@ class OltConnector
     {
         Log::info("Executing command: $command");
         $this->ssh->write("$command\n");
+        $output = '';
+
         if ($expectOutput) {
-            $response = $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
-            Log::info("Command response: $response");
-            return $response;
+            while (true) {
+                $response = $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
+                $output .= $response;
+
+                if (strpos($response, '--More--') !== false) {
+                    $this->ssh->write(" "); // Send space to continue the output
+                } else {
+                    break;
+                }
+            }
+            Log::info("Command response: $output");
+            return $output;
         } else {
             // Wait until the prompt returns
-            $response = $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
-            Log::info("Command response: $response");
+            while (true) {
+                $response = $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
+                $output .= $response;
+
+                if (strpos($response, '--More--') !== false) {
+                    $this->ssh->write(" "); // Send space to continue the output
+                } else {
+                    break;
+                }
+            }
+            Log::info("Command response: $output");
             return '';
         }
     }
