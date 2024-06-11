@@ -27,6 +27,7 @@ class ToggleCatvStatus extends Command
      */
     public function handle(OltConnector $oltConnector)
     {
+        $this->info('Start');
         $port = $this->askWithValidation('Enter the GPON port number (e.g., 5)');
         $onuId = $this->askWithValidation('Enter the ONU ID (e.g., 28)');
         $model = $this->choice('Select the ONU model', ['V452', 'V642', 'EG8143H5']);
@@ -46,12 +47,15 @@ class ToggleCatvStatus extends Command
 
     private function askWithValidation($question)
     {
+        $this->info('abt to loop');
         do {
+            $this->info('looping');
             $response = $this->ask($question);
             if (empty($response)) {
                 $this->error('This field is required.');
             }
         } while (empty($response));
+        $this->info('end looping');
 
         return $response;
     }
