@@ -120,11 +120,8 @@ class OltHelper
         // Get current WiFi switch settings
         $wifiSwitchSettings = [];
         if ($model === 'V452') {
-            $bands = [1, 2];
-            foreach ($bands as $band) {
-                $output = $oltConnector->executeCommand("show onu $onuId pri wifi_switch $band");
-                $wifiSwitchSettings[$band] = self::parseWifiState($output);
-            }
+            $output = $oltConnector->executeCommand("show onu $onuId pri wifi_switch");
+            $wifiSwitchSettings = self::parseV452WifiSwitchState($output);
         } else { // For V642
             $output = $oltConnector->executeCommand("show onu $onuId pri wifi_switch");
             $wifiSwitchSettings[1] = self::parseWifiState($output);
@@ -146,6 +143,16 @@ class OltHelper
             'wifi_switch' => $wifiSwitchSettings,
             'ssid' => $wifiSettings
         ];
+    }
+
+    private static function parseV452WifiSwitchState($output)
+    {
+        $wifiSwitchSettings = [];
+        preg_match_all('/Index\s+:\s+Wifi\d+\s+Status\s+:\s+(Enable|Disable)/', $output, $matches, PREG_SET_ORDER);
+        foreach ($matches as $index => $match) {
+            $wifiSwitchSettings[$index + 1] = ($match[1] === 'Enable') ? 'enable' : 'disable';
+        }
+        return $wifiSwitchSettings;
     }
 
     private static function parseWifiSsid($output)
