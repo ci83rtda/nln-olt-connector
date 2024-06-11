@@ -187,7 +187,7 @@ class OltHelper
 
         foreach ($wifiSettings as $id => $settings) {
             // Update WiFi SSID if provided
-            if ($settings['state'] === 'enable') {
+            if ($settings['state'] === 'enable' || $settings['state'] === 'no change') {
                 $oltConnector->executeCommand("onu $onuId pri wifi_ssid $id name {$settings['ssid']} hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$settings['shared_key']} rekey_interval 0", false);
             } elseif ($settings['state'] === 'disable') {
                 $oltConnector->executeCommand("onu $onuId pri wifi_ssid $id disable", false);
