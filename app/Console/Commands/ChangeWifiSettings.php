@@ -51,24 +51,26 @@ class ChangeWifiSettings extends Command
         $wifiSwitchSettings = [];
         $bands = $model === 'V452' ? [1, 2] : [1];
         foreach ($bands as $band) {
+            $frequency = ($band === 1) ? '2.4 GHz' : '5 GHz';
             $currentState = $currentSettings["wifi_switch"][$band] ?? 'unknown';
             $options = ($currentState === 'enable') ? ['disable', 'no change'] : ['enable', 'no change'];
-            $wifiSwitchSettings[$band] = $this->choice("Current status for WiFi switch $band is $currentState. Enable, disable, or no change?", $options, 'no change');
+            $wifiSwitchSettings[$band] = $this->choice("Current status for WiFi switch $band ($frequency) is $currentState. Enable, disable, or no change?", $options, 'no change');
         }
 
         // Handle SSID settings
         $ssidRange = $model === 'V642' ? range(1, 4) : range(1, 8);
         $wifiSettings = [];
         foreach ($ssidRange as $i) {
+            $frequency = ($i <= 4) ? '2.4 GHz' : '5 GHz';
             $currentState = $currentSettings["ssid"][$i]['state'] ?? 'unknown';
             $options = ($currentState === 'enable') ? ['disable', 'no change'] : ['enable', 'no change'];
             $wifiSettings[$i] = [
-                'state' => $this->choice("Current status for WiFi SSID $i is $currentState. Enable, disable, or no change?", $options, 'no change')
+                'state' => $this->choice("Current status for WiFi SSID $i ($frequency) is $currentState. Enable, disable, or no change?", $options, 'no change')
             ];
 
             if ($wifiSettings[$i]['state'] === 'enable' || ($wifiSettings[$i]['state'] === 'no change' && $currentState === 'enable')) {
-                $wifiSettings[$i]['ssid'] = $this->ask("Enter the new WiFi SSID for SSID $i", $currentSettings["ssid"][$i]['ssid'] ?? '');
-                $wifiSettings[$i]['shared_key'] = $this->ask("Enter the new WiFi shared key for SSID $i", $currentSettings["ssid"][$i]['shared_key'] ?? '');
+                $wifiSettings[$i]['ssid'] = $this->ask("Enter the new WiFi SSID for SSID $i ($frequency)", $currentSettings["ssid"][$i]['ssid'] ?? '');
+                $wifiSettings[$i]['shared_key'] = $this->ask("Enter the new WiFi shared key for SSID $i ($frequency)", $currentSettings["ssid"][$i]['shared_key'] ?? '');
             } else {
                 $wifiSettings[$i]['ssid'] = null;
                 $wifiSettings[$i]['shared_key'] = null;
