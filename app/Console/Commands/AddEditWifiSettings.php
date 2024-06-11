@@ -58,6 +58,10 @@ class AddEditWifiSettings extends Command
         }
 
         try {
+            $oltConnector->enable();
+            $oltConnector->executeCommand('configure terminal', false);
+            $oltConnector->executeCommand("interface gpon 0/$port", false);
+
             Log::info('Attempting to add/edit WiFi settings for ONU');
             $oltConnector->changeWifiSettings($port, $onuId, $wifiSettings, $wifiSwitchSettings, $model);
             Log::info('WiFi settings added/edited successfully.');
