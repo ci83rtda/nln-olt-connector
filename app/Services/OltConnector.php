@@ -112,14 +112,14 @@ class OltConnector
         $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
     }
 
-    public function getCurrentWifiSettings($port, $onuId)
+    public function getCurrentWifiSettings($port, $onuId, $model)
     {
-        return OltHelper::getCurrentWifiSettings($this, $port, $onuId);
+        return OltHelper::getCurrentWifiSettings($this, $port, $onuId, $model);
     }
 
-    public function changeWifiSettings($port, $onuId, $wifiSettings)
+    public function changeWifiSettings($port, $onuId, $wifiSettings, $wifiSwitchSettings, $model)
     {
-        OltHelper::changeWifiSettings($this, $port, $onuId, $wifiSettings);
+        OltHelper::changeWifiSettings($this, $port, $onuId, $wifiSettings, $wifiSwitchSettings, $model);
     }
 
 }
