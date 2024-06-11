@@ -49,7 +49,7 @@ class ChangeWifiSettings extends Command
 
         // Handle WiFi switch status
         $wifiSwitchSettings = [];
-        $bands = $model === 'VSOLV452' ? [1, 2] : [1];
+        $bands = $model === 'V452' ? [1, 2] : [1];
         foreach ($bands as $band) {
             $currentState = $currentSettings["wifi_switch"][$band] ?? 'unknown';
             $options = ($currentState === 'enable') ? ['disable', 'no change'] : ['enable', 'no change'];
@@ -57,7 +57,7 @@ class ChangeWifiSettings extends Command
         }
 
         // Handle SSID settings
-        $ssidRange = $model === 'VSOLV642' ? range(1, 4) : range(1, 8);
+        $ssidRange = $model === 'V642' ? range(1, 4) : range(1, 8);
         $wifiSettings = [];
         foreach ($ssidRange as $i) {
             $currentState = $currentSettings["ssid"][$i]['state'] ?? 'unknown';

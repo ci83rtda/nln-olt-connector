@@ -119,14 +119,19 @@ class OltHelper
     {
         // Get current WiFi switch settings
         $wifiSwitchSettings = [];
-        $bands = $model === 'VSOLV452' ? [1, 2] : [1];
-        foreach ($bands as $band) {
-            $output = $oltConnector->executeCommand("show onu $onuId pri wifi_switch $band");
-            $wifiSwitchSettings[$band] = self::parseWifiState($output);
+        if ($model === 'V452') {
+            $bands = [1, 2];
+            foreach ($bands as $band) {
+                $output = $oltConnector->executeCommand("show onu $onuId pri wifi_switch $band");
+                $wifiSwitchSettings[$band] = self::parseWifiState($output);
+            }
+        } else { // For V642
+            $output = $oltConnector->executeCommand("show onu $onuId pri wifi_switch");
+            $wifiSwitchSettings[1] = self::parseWifiState($output);
         }
 
         // Get current WiFi settings for SSIDs
-        $ssidRange = $model === 'VSOLV642' ? range(1, 4) : range(1, 8);
+        $ssidRange = $model === 'V642' ? range(1, 4) : range(1, 8);
         $wifiSettings = [];
         foreach ($ssidRange as $i) {
             $output = $oltConnector->executeCommand("show onu $onuId pri wifi_ssid $i");
@@ -166,11 +171,11 @@ class OltHelper
         foreach ($wifiSwitchSettings as $switch => $state) {
             if ($state !== 'no change') {
                 if ($state === 'enable') {
-                    if ($model === 'VSOLV452') {
+                    if ($model === 'V452') {
                         $command = ($switch === 1) ?
                             "onu $onuId pri wifi_switch 1 enable fcc auto 80211ac0 20 40" :
                             "onu $onuId pri wifi_switch 2 enable fcc channel 0 80211bgn 20";
-                    } else {
+                    } else { // For V642
                         $command = "onu $onuId pri wifi_switch 1 enable fcc channel 0 80211bgn 20 20/40";
                     }
                 } elseif ($state === 'disable') {
