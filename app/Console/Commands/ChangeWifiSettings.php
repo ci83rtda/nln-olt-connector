@@ -35,9 +35,14 @@ class ChangeWifiSettings extends Command
         $oltConnector->executeCommand('configure terminal', false);
         $oltConnector->executeCommand("interface gpon 0/$port", false);
 
-        // Determine the ONU model
-        $equid = $oltConnector->executeCommand("onu $onuId pri equid");
-        $model = $this->parseModel($equid);
+        // Fetch ONU info to determine the model
+        $onuInfo = $oltConnector->executeCommand("show onu info");
+        $model = $this->getOnuModel($onuInfo, $port, $onuId);
+
+        if ($model !== 'V452' && $model !== 'V642') {
+            $this->info('WiFi credential management is not supported for this ONU model.');
+            return 1;
+        }
 
         // Fetch current WiFi settings
         $currentSettings = $oltConnector->getCurrentWifiSettings($port, $onuId, $model);
@@ -102,9 +107,15 @@ class ChangeWifiSettings extends Command
         return $response;
     }
 
-    private function parseModel($equidOutput)
+    private function getOnuModel($onuInfo, $port, $onuId)
     {
-        preg_match('/equid\s+([^\s]+)/', $equidOutput, $matches);
-        return $matches[1] ?? 'unknown';
+        $lines = explode("\n", $onuInfo);
+        foreach ($lines as $line) {
+            $line = preg_replace('/\x1B\[[0-9;]*[A-Za-z]/', '', $line);
+            if (preg_match("/GPON0\/$port:$onuId\s+(\w+)/", $line, $matches)) {
+                return $matches[1];
+            }
+        }
+        return 'unknown';
     }
 }
