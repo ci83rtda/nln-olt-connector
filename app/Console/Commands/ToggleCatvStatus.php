@@ -27,19 +27,20 @@ class ToggleCatvStatus extends Command
      */
     public function handle(OltConnector $oltConnector)
     {
-        $this->info('Start');
         $port = $this->askWithValidation('Enter the GPON port number (e.g., 5)');
         $onuId = $this->askWithValidation('Enter the ONU ID (e.g., 28)');
         $model = $this->choice('Select the ONU model', ['V452', 'V642', 'EG8143H5']);
 
+        $newStatus = $this->choice('Enter the new CATV status', ['enable', 'disable']);
+
         try {
-            Log::info('Attempting to toggle CATV status for ONU');
-            $oltConnector->toggleCatvStatus($port, $onuId, $model);
-            Log::info('CATV status toggled successfully.');
-            $this->info('CATV status toggled successfully.');
+            Log::info('Attempting to set CATV status for ONU');
+            $oltConnector->toggleCatvStatus($port, $onuId, $model, $newStatus);
+            Log::info('CATV status set successfully.');
+            $this->info('CATV status set successfully.');
         } catch (\Exception $e) {
-            Log::error('Error toggling CATV status: ' . $e->getMessage());
-            $this->error('Failed to toggle CATV status. Check logs for details.');
+            Log::error('Error setting CATV status: ' . $e->getMessage());
+            $this->error('Failed to set CATV status. Check logs for details.');
         }
 
         return 0;
@@ -47,15 +48,12 @@ class ToggleCatvStatus extends Command
 
     private function askWithValidation($question)
     {
-        $this->info('abt to loop');
         do {
-            $this->info('looping');
             $response = $this->ask($question);
             if (empty($response)) {
                 $this->error('This field is required.');
             }
         } while (empty($response));
-        $this->info('end looping');
 
         return $response;
     }

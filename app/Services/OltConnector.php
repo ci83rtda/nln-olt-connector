@@ -142,46 +142,35 @@ class OltConnector
         OltHelper::changeWifiSettings($this, $port, $onuId, $wifiSettings, $wifiSwitchSettings, $model);
     }
 
-    public function toggleCatvStatus($port, $onuId, $model)
+    public function toggleCatvStatus($port, $onuId, $model, $newStatus)
     {
         $command = '';
 
         switch ($model) {
             case 'V452':
             case 'V642':
-                $command = "onu $onuId pri catv";
+                $command = "onu $onuId pri catv $newStatus";
                 break;
             case 'EG8143H5':
-                $command = "onu $onuId video 1 state lock power";
+                $command = "onu $onuId video 1 state lock power $newStatus";
                 break;
             default:
                 throw new \Exception('Unsupported ONU model.');
         }
-
-        // Read the current CATV status
-        $currentStatus = $this->executeCommand("$command state", true);
-        if (strpos($currentStatus, 'disable') !== false) {
-            $newStatus = 'enable';
-        } else {
-            $newStatus = 'disable';
-        }
-
-        // Construct the command to toggle the status
-        $toggleCommand = "$command $newStatus";
 
         // Enable, configure terminal, and interface gpon
         $this->enable();
         $this->executeCommand('configure terminal', false);
         $this->executeCommand("interface gpon 0/$port", false);
 
-        // Execute the command to toggle CATV status
-        $this->executeCommand($toggleCommand, false);
+        // Execute the command to set CATV status
+        $this->executeCommand($command, false);
 
         // Exit configuration mode and save configuration
         $this->executeCommand('exit', false);
         $this->executeCommand('write memory', false);
 
-        Log::info("Toggled CATV status for ONU $onuId on port $port to $newStatus.");
+        Log::info("Set CATV status for ONU $onuId on port $port to $newStatus.");
     }
 
 }
