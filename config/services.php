@@ -41,6 +41,8 @@ return [
         'password' => env('OLT_PASSWORD'),
         'enable_password' => env('OLT_PASSWORD'),
     ],
-    'central_api.url' => 'https://webhook.site/8e95d97a-4209-43e2-a2c1-e59a6895ece6'
+    'central_api' => [
+        'url' => 'https://webhook.site/8e95d97a-4209-43e2-a2c1-e59a6895ece6'
+    ]
 
 ];
