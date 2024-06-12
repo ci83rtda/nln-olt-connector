@@ -30,7 +30,7 @@ class GetWifiDetails extends Command
         $port = $this->askWithValidation('Enter the GPON port number (e.g., 5)');
         $onuId = $this->askWithValidation('Enter the ONU ID (e.g., 28)');
         $model = $this->choice('Select the ONU model', ['V452', 'V642']);
-        $asJson = $this->option('json');
+        $asJson = $this->choice('Return details as JSON?', ['false', 'true'], 'false') === 'true';
 
         try {
             Log::info('Attempting to retrieve WiFi details for ONU');
