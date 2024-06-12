@@ -231,4 +231,24 @@ class OltHelper
         return isset($matches[1]) ? ($matches[1] === 'Enable' ? 'enable' : 'disable') : null;
     }
 
+    public static function parseOpticalInfo($output)
+    {
+        $info = [];
+        preg_match('/Rx optical level:\s+([-\d.]+|N\/A)\(dBm\)/', $output, $rxMatches);
+        preg_match('/Tx optical level:\s+([-\d.]+|N\/A)\(dBm\)/', $output, $txMatches);
+        preg_match('/Temperature:\s+([-\d.]+|N\/A)\(C\)/', $output, $tempMatches);
+
+        $info['rx_optical_level'] = $rxMatches[1] ?? 'N/A';
+        $info['tx_optical_level'] = $txMatches[1] ?? 'N/A';
+        $info['temperature'] = $tempMatches[1] ?? 'N/A';
+
+        return $info;
+    }
+
+    public static function parseDistance($output)
+    {
+        preg_match('/Distance:\s+(\d+)/', $output, $matches);
+        return $matches[1] ?? null;
+    }
+
 }

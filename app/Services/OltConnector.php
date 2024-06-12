@@ -218,4 +218,42 @@ class OltConnector
         return $details;
     }
 
+    public function getOnuStatus($port, $onuId, $asJson = false)
+    {
+        $status = [
+            'optical_info' => [],
+            'distance' => null
+        ];
+
+        // Enable, configure terminal, and interface gpon
+        $this->enable();
+        $this->executeCommand('configure terminal', false);
+        $this->executeCommand("interface gpon 0/$port", false);
+
+        // Get optical information
+        $opticalOutput = $this->executeCommand("show onu $onuId optical_info", true);
+        $parsedOpticalInfo = OltHelper::parseOpticalInfo($opticalOutput);
+        $status['optical_info'] = $parsedOpticalInfo;
+
+        // Get distance information
+        $distanceOutput = $this->executeCommand("show onu $onuId distance", true);
+        $parsedDistance = OltHelper::parseDistance($distanceOutput);
+        $status['distance'] = $parsedDistance;
+
+        // Exit configuration mode
+        $this->executeCommand('exit', false);
+
+        Log::info("Retrieved status for ONU $onuId on port $port.");
+
+        if (empty($status['optical_info']) && $status['distance'] === null) {
+            return $asJson ? json_encode(['error' => 'No data found or device not compatible.']) : 'No data found or device not compatible.';
+        }
+
+        if ($asJson) {
+            return json_encode($status);
+        }
+
+        return $status;
+    }
+
 }
