@@ -159,7 +159,7 @@ class OltConnector
                 $command = "onu $onuId pri catv $newStatus";
                 break;
             case 'EG8143H5':
-                $command = "onu $onuId video 1 state lock power $newStatus";
+                $command = "onu $onuId video 1 state $newStatus power disable"; //lock or unlock
                 break;
             default:
                 throw new \Exception('Unsupported ONU model.');

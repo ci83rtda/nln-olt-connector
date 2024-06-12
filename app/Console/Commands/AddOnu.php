@@ -46,7 +46,7 @@ class AddOnu extends Command
             $params['shared_key'] = $this->askWithValidation('Enter the WiFi shared key');
             $params['catv'] = $this->choice('Enable CATV?', ['enable', 'disable'], 'disable');
         } elseif ($onuType === 'huawei') {
-            $params['video'] = $this->choice('Enable video?', ['enable', 'disable'], 'disable');
+            $params['video'] = $this->choice('Enable video? unlock: enable, lock: disable', ['unlock', 'lock'], 'lock');
         } else {
             $this->error('Unknown ONU type.');
             return 1;

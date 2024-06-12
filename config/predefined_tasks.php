@@ -7,7 +7,7 @@ return [
             'port' => 1,
             'onuId' => 1,
             'model' => 'V452',
-            'newStatus' => 'enable',
+            'newStatus' => 'unlock',
             'request_id' => '123456'
         ],
         'addOnu' => [

@@ -109,7 +109,7 @@ class OltHelper
         $oltConnector->executeCommand("onu $onuId service-port 1 gemport 1 uservlan {$params['vlanid']} vlan {$params['vlanid']}", false);
         $oltConnector->executeCommand("onu $onuId portvlan veip 1 mode transparent", false);
         if (isset($params['video'])) {
-            $oltConnector->executeCommand("onu $onuId video 1 state lock power {$params['video']}", false);
+            $oltConnector->executeCommand("onu $onuId video 1 state {$params['video']} power disable", false);
         }
         $oltConnector->executeCommand('exit', false);
         $oltConnector->executeCommand('write memory', false);

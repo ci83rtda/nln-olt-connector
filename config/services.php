@@ -42,7 +42,7 @@ return [
         'enable_password' => env('OLT_PASSWORD'),
     ],
     'central_api' => [
-        'url' => 'https://webhook.site/8e95d97a-4209-43e2-a2c1-e59a6895ece6'
+        'url' => 'https://3d6e-71-26-207-97.ngrok-free.app'
     ]
 
 ];
