@@ -72,7 +72,8 @@ class GetWifiDetails extends Command
 
         $this->info('WiFi SSID Details:');
         foreach ($details['ssid'] as $index => $ssidDetails) {
-            $this->info("SSID $index: Name: {$ssidDetails['ssid']}, Status: {$ssidDetails['state']}, Shared Key: {$ssidDetails['shared_key']}");
+            $frequency = ($index <= 4) ? '2.4 GHz' : '5.0 GHz';
+            $this->info("SSID $index ($frequency): Name: {$ssidDetails['ssid']}, Status: {$ssidDetails['state']}, Shared Key: {$ssidDetails['shared_key']}");
         }
     }
 }
