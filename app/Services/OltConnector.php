@@ -174,7 +174,7 @@ class OltConnector
     }
 
 
-    public function getWifiDetails($port, $onuId, $model)
+    public function getWifiDetails($port, $onuId, $model, $asJson = false)
     {
         $details = [];
 
@@ -203,6 +203,11 @@ class OltConnector
         $this->executeCommand('exit', false);
 
         Log::info("Retrieved WiFi details for ONU $onuId on port $port.");
+
+        if ($asJson) {
+            return json_encode($details);
+        }
+
         return $details;
     }
 

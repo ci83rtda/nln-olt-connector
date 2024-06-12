@@ -29,14 +29,20 @@ class GetWifiDetails extends Command
     {
         $port = $this->askWithValidation('Enter the GPON port number (e.g., 5)');
         $onuId = $this->askWithValidation('Enter the ONU ID (e.g., 28)');
-        $model = $this->choice('Select the ONU model', ['V452', 'V642', 'EG8143H5']);
+        $model = $this->choice('Select the ONU model', ['V452', 'V642']);
+        $asJson = $this->option('json');
 
         try {
             Log::info('Attempting to retrieve WiFi details for ONU');
-            $details = $oltConnector->getWifiDetails($port, $onuId, $model);
+            $details = $oltConnector->getWifiDetails($port, $onuId, $model, $asJson);
             Log::info('WiFi details retrieved successfully.');
             $this->info('WiFi details retrieved successfully.');
-            $this->displayWifiDetails($details);
+
+            if ($asJson) {
+                $this->line($details);
+            } else {
+                $this->displayWifiDetails($details);
+            }
         } catch (\Exception $e) {
             Log::error('Error retrieving WiFi details: ' . $e->getMessage());
             $this->error('Failed to retrieve WiFi details. Check logs for details.');
