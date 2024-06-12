@@ -186,17 +186,17 @@ class OltConnector
         // Get WiFi switch details
         if ($model === 'V452') {
             $switchOutput = $this->executeCommand("show onu $onuId pri wifi_switch", true);
-            $details['wifi_switch'] = $this->parseWifiSwitchDetails($switchOutput);
+            $details['wifi_switch'] = OltHelper::parseWifiSwitchDetails($switchOutput);
         } else { // For V642
             $switchOutput = $this->executeCommand("show onu $onuId pri wifi_switch", true);
-            $details['wifi_switch'][1] = $this->parseWifiState($switchOutput);
+            $details['wifi_switch'][1] = OltHelper::parseWifiStatus($switchOutput);
         }
 
         // Get WiFi SSID details
         $ssidRange = $model === 'V642' ? range(1, 4) : range(1, 8);
         foreach ($ssidRange as $i) {
             $ssidOutput = $this->executeCommand("show onu $onuId pri wifi_ssid $i", true);
-            $details['ssid'][$i] = $this->parseWifiSsidDetails($ssidOutput);
+            $details['ssid'][$i] = OltHelper::parseWifiSsidDetails($ssidOutput);
         }
 
         // Exit configuration mode
@@ -209,35 +209,6 @@ class OltConnector
         }
 
         return $details;
-    }
-
-    private function parseWifiSwitchDetails($output)
-    {
-        $details = [];
-        preg_match_all('/Index\s+:\s+Wifi\d+\s+Status\s+:\s+(Enable|Disable)/', $output, $matches, PREG_SET_ORDER);
-        foreach ($matches as $index => $match) {
-            $details[$index + 1] = ($match[1] === 'Enable') ? 'enable' : 'disable';
-        }
-        return $details;
-    }
-
-    private function parseWifiSsidDetails($output)
-    {
-        preg_match('/Name\s+:\s+([^\s]+)/', $output, $nameMatches);
-        preg_match('/Preshared Key\s+:\s+([^\s]+)/', $output, $keyMatches);
-        preg_match('/Status\s+:\s+(Enable|Disable)/', $output, $stateMatches);
-
-        return [
-            'ssid' => $nameMatches[1] ?? null,
-            'shared_key' => $keyMatches[1] ?? null,
-            'state' => isset($stateMatches[1]) ? ($stateMatches[1] === 'Enable' ? 'enable' : 'disable') : null,
-        ];
-    }
-
-    private function parseWifiState($output)
-    {
-        preg_match('/Status\s+:\s+(Enable|Disable)/', $output, $matches);
-        return isset($matches[1]) ? ($matches[1] === 'Enable' ? 'enable' : 'disable') : null;
     }
 
 }

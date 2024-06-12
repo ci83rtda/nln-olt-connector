@@ -202,4 +202,33 @@ class OltHelper
         }
     }
 
+    public static function parseWifiSwitchDetails($output)
+    {
+        $details = [];
+        preg_match_all('/Index\s+:\s+Wifi\d+\s+Status\s+:\s+(Enable|Disable)/', $output, $matches, PREG_SET_ORDER);
+        foreach ($matches as $index => $match) {
+            $details[$index + 1] = ($match[1] === 'Enable') ? 'enable' : 'disable';
+        }
+        return $details;
+    }
+
+    public static function parseWifiSsidDetails($output)
+    {
+        preg_match('/Name\s+:\s+([^\s]+)/', $output, $nameMatches);
+        preg_match('/Preshared Key\s+:\s+([^\s]+)/', $output, $keyMatches);
+        preg_match('/Status\s+:\s+(Enable|Disable)/', $output, $stateMatches);
+
+        return [
+            'ssid' => $nameMatches[1] ?? null,
+            'shared_key' => $keyMatches[1] ?? null,
+            'state' => isset($stateMatches[1]) ? ($stateMatches[1] === 'Enable' ? 'enable' : 'disable') : null,
+        ];
+    }
+
+    public static function parseWifiStatus($output)
+    {
+        preg_match('/Status\s+:\s+(Enable|Disable)/', $output, $matches);
+        return isset($matches[1]) ? ($matches[1] === 'Enable' ? 'enable' : 'disable') : null;
+    }
+
 }
