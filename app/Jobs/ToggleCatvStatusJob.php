@@ -36,5 +36,8 @@ class ToggleCatvStatusJob extends BaseTaskJob
             Log::error('Error toggling CATV status: ' . $e->getMessage());
             $this->reportCompletion('error', $e->getMessage());
         }
+
+        // Ensure the job stops after handling the task
+        return;
     }
 }

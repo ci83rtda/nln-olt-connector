@@ -31,5 +31,8 @@ class AddOnuJob extends BaseTaskJob
             Log::error('Error adding ONU: ' . $e->getMessage());
             $this->reportCompletion('error', $e->getMessage());
         }
+
+        // Ensure the job stops after handling the task
+        return;
     }
 }

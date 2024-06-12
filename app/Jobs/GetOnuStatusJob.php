@@ -29,5 +29,8 @@ class GetOnuStatusJob extends BaseTaskJob
             Log::error('Error retrieving ONU status: ' . $e->getMessage());
             $this->reportCompletion('error', $e->getMessage());
         }
+
+        // Ensure the job stops after handling the task
+        return;
     }
 }
