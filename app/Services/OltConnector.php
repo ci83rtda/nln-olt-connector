@@ -174,7 +174,7 @@ class OltConnector
     }
 
 
-    public function getWifiDetails($port, $onuId, $model, $asJson = false)
+    public function getWifiDetails($port, $onuId, $asJson = false)
     {
         $details = [];
 
@@ -184,25 +184,32 @@ class OltConnector
         $this->executeCommand("interface gpon 0/$port", false);
 
         // Get WiFi switch details
-        if ($model === 'V452') {
-            $switchOutput = $this->executeCommand("show onu $onuId pri wifi_switch", true);
-            $details['wifi_switch'] = OltHelper::parseWifiSwitchDetails($switchOutput);
-        } else { // For V642
-            $switchOutput = $this->executeCommand("show onu $onuId pri wifi_switch", true);
-            $details['wifi_switch'][1] = OltHelper::parseWifiStatus($switchOutput);
-        }
+        $switchOutput = $this->executeCommand("show onu $onuId pri wifi_switch", true);
+        $details['wifi_switch'] = OltHelper::parseWifiSwitchDetails($switchOutput);
+
+        // Determine the number of SSIDs based on switch details
+        $ssidRange = isset($details['wifi_switch'][2]) ? range(1, 8) : range(1, 4);
 
         // Get WiFi SSID details
-        $ssidRange = $model === 'V642' ? range(1, 4) : range(1, 8);
         foreach ($ssidRange as $i) {
             $ssidOutput = $this->executeCommand("show onu $onuId pri wifi_ssid $i", true);
-            $details['ssid'][$i] = OltHelper::parseWifiSsidDetails($ssidOutput);
+            if (empty($ssidOutput)) {
+                continue;
+            }
+            $ssidDetails = OltHelper::parseWifiSsidDetails($ssidOutput);
+            if (!empty($ssidDetails['ssid'])) {
+                $details['ssid'][$i] = $ssidDetails;
+            }
         }
 
         // Exit configuration mode
         $this->executeCommand('exit', false);
 
         Log::info("Retrieved WiFi details for ONU $onuId on port $port.");
+
+        if (empty($details['wifi_switch']) && empty($details['ssid'])) {
+            return $asJson ? json_encode(['error' => 'No data found or device not compatible.']) : 'No data found or device not compatible.';
+        }
 
         if ($asJson) {
             return json_encode($details);
