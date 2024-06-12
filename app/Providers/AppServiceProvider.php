@@ -25,14 +25,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Event::listen(
-            TaskCompleted::class,
-            HandleTaskCompletion::class,
-        );
-
-        Event::listen(
-            TaskFetched::class,
-            TaskFetchedListener::class
-        );
+//        Event::listen(
+//            TaskCompleted::class,
+//            HandleTaskCompletion::class,
+//        );
+//
+//        Event::listen(
+//            TaskFetched::class,
+//            TaskFetchedListener::class
+//        );
     }
 }
