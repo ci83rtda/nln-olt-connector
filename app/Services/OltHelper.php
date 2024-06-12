@@ -233,6 +233,9 @@ class OltHelper
 
     public static function parseOpticalInfo($output)
     {
+        // Remove ANSI escape sequences
+        $output = preg_replace('/\x1B\[[0-9;]*[A-Za-z]/', '', $output);
+
         $info = [];
         preg_match('/Rx optical level:\s+([-\d.]+|N\/A)\(dBm\)/', $output, $rxMatches);
         preg_match('/Tx optical level:\s+([-\d.]+|N\/A)\(dBm\)/', $output, $txMatches);
@@ -247,6 +250,9 @@ class OltHelper
 
     public static function parseDistance($output)
     {
+        // Remove ANSI escape sequences
+        $output = preg_replace('/\x1B\[[0-9;]*[A-Za-z]/', '', $output);
+
         preg_match('/Distance:\s+(\d+)/', $output, $matches);
         return $matches[1] ?? null;
     }
