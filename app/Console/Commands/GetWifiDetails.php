@@ -67,7 +67,8 @@ class GetWifiDetails extends Command
     {
         $this->info('WiFi Switch Details:');
         foreach ($details['wifi_switch'] as $index => $state) {
-            $this->info("Switch $index: $state");
+            $frequency = ($index == 1) ? '2.4 GHz' : '5.0 GHz';
+            $this->info("Switch $index ($frequency): $state");
         }
 
         $this->info('WiFi SSID Details:');
