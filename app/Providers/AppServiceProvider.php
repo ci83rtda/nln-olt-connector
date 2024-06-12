@@ -5,7 +5,7 @@ namespace App\Providers;
 use App\Events\TaskCompleted;
 use App\Events\TaskFetched;
 use App\Jobs\BaseTaskJob;
-use App\Listeners\HandleFetchedTask;
+use App\Listeners\TaskFetchedListener;
 use App\Listeners\HandleTaskCompletion;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
 
         Event::listen(
             TaskFetched::class,
-            HandleFetchedTask::class
+            TaskFetchedListener::class
         );
     }
 }
