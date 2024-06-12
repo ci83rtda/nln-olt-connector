@@ -16,7 +16,7 @@ class HandleTaskCompletion
      * @param TaskCompleted $event
      * @return void
      */
-    public function handle(TaskCompleted $event)
+    public function handle(TaskCompleted $event): void
     {
         $url = config('services.central_api.url') . '/task/callback';
 
