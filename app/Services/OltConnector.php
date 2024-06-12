@@ -127,6 +127,13 @@ class OltConnector
 
     public function enable()
     {
+        // Check if we are already in enable mode
+        $prompt = $this->ssh->read('/(#|>|\(config\))\s*/', SSH2::READ_REGEX);
+        if (strpos($prompt, '(config)') !== false || strpos($prompt, '#') !== false) {
+            Log::info("Already in enable mode.");
+            return;
+        }
+
         $this->executeCommand('enable', false);
         $this->ssh->write($this->enablePassword . "\n");
         $this->ssh->read('/#\s*/', SSH2::READ_REGEX);
