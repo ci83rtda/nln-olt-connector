@@ -232,11 +232,13 @@ class OltConnector
 
         // Get optical information
         $opticalOutput = $this->executeCommand("show onu $onuId optical_info", true);
+        Log::info("Optical Info Output: $opticalOutput");
         $parsedOpticalInfo = OltHelper::parseOpticalInfo($opticalOutput);
         $status['optical_info'] = $parsedOpticalInfo;
 
         // Get distance information
         $distanceOutput = $this->executeCommand("show onu $onuId distance", true);
+        Log::info("Distance Output: $distanceOutput");
         $parsedDistance = OltHelper::parseDistance($distanceOutput);
         $status['distance'] = $parsedDistance;
 
