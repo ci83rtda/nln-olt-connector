@@ -122,7 +122,7 @@ class OltConnector
             $availableOnuId++;
         }
 
-        throw new \Exception('available onu id: '.$availableOnuId);
+        throw new \Exception('available onu id: '.$availableOnuId.' json: '. json_encode($existingOnus));
 
         // Delegate the ONU addition to the helper class
         OltHelper::addOnu($this, $availableOnuId, $serialNumber, $params);
