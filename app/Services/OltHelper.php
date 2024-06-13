@@ -36,14 +36,13 @@ class OltHelper
         $lines = explode("\n", $output);
         $onus = [];
 
-        Log::info("Matched ONU: " . json_encode($lines));
-
         foreach ($lines as $line) {
             // Log each line before processing
             Log::info("Processing line: " . $line);
 
-            // Remove ANSI escape sequences
+            // Remove ANSI escape sequences and control characters
             $line = preg_replace('/\x1B\[[0-9;]*[A-Za-z]/', '', $line);
+            $line = preg_replace('/[\r\n\x0b\x0c\e]/', '', $line);
 
             // Log the line after removing escape characters
             Log::info("Processed line: " . $line);
