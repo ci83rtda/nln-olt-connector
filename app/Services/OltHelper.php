@@ -47,7 +47,7 @@ class OltHelper
             Log::info("Processed line: " . $line);
 
             // Use a more flexible regex to match the format and capture groups for both GPON and HWTC prefixes
-            if (preg_match('/^(GPON|HWTC)\d+\/\d+:(\d+)\s+[^\s]+\s+[^\s]+\s+[^\s]+\s+([^\s]+)$/', trim($line), $matches)) {
+            if (preg_match('/^(GPON|HWTC)\d+\/\d+:(\d+)\s+\S+\s+\S+\s+\S+\s+(\S+)$/', trim($line), $matches)) {
                 $onus[(int)$matches[2]] = [
                     'OnuId' => (int)$matches[2],
                     'Sn' => trim($matches[3]),
