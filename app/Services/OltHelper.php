@@ -41,7 +41,7 @@ class OltHelper
             Log::info("Processing line: " . $line);
 
             // Remove escape characters for cursor movement
-            $line = preg_replace('/\x1B\[[0-9;]*[A-Za-z]/', '', $line);
+//            $line = preg_replace('/\x1B\[[0-9;]*[A-Za-z]/', '', $line);
 
             // Log the line after removing escape characters
             Log::info("Processed line: " . $line);
