@@ -70,7 +70,7 @@ class OltConnector
         }
     }
 
-    public function fetchPendingOnus()
+    public function fetchPendingOnus($wantsJson = false)
     {
         $this->executeCommand('enable', false);
         $this->ssh->write($this->enablePassword . "\n");
@@ -94,11 +94,14 @@ class OltConnector
             }
         }
 
-        Cache::put('pending_onus', $pendingOnus);
+        //Cache::put('pending_onus', $pendingOnus);
 
         $this->closeConnection();
 
-        return $pendingOnus;
+        if (!$wantsJson) {
+            return $pendingOnus;
+        }
+        return json_encode($pendingOnus);
     }
 
     public function addOnu($port, $serialNumber, $params)
@@ -118,6 +121,8 @@ class OltConnector
         while (array_key_exists($availableOnuId, $existingOnus)) {
             $availableOnuId++;
         }
+
+        throw new \Exception('available onu id: '.$availableOnuId);
 
         // Delegate the ONU addition to the helper class
         OltHelper::addOnu($this, $availableOnuId, $serialNumber, $params);
