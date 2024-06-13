@@ -36,6 +36,8 @@ class OltHelper
         $lines = explode("\n", $output);
         $onus = [];
 
+        Log::info("Matched ONU: " . json_encode($lines));
+
         foreach ($lines as $line) {
             // Log each line before processing
             Log::info("Processing line: " . $line);
@@ -46,8 +48,8 @@ class OltHelper
             // Log the line after removing escape characters
             Log::info("Processed line: " . $line);
 
-            // Use a more flexible regex to match the format and capture groups for both GPON and HWTC prefixes
-            if (preg_match('/^(GPON|HWTC)\d+\/\d+:(\d+)\s+\S+\s+\S+\s+\S+\s+(\S+)$/', trim($line), $matches)) {
+            // Use a more flexible regex to match the format and capture groups for GPON prefixes
+            if (preg_match('/^GPON\d+\/\d+:(\d+)\s+\S+\s+\S+\s+\S+\s+(\S+)$/', trim($line), $matches)) {
                 $onus[(int)$matches[2]] = [
                     'OnuId' => (int)$matches[2],
                     'Sn' => trim($matches[3]),
