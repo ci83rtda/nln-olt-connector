@@ -46,7 +46,7 @@ class OltHelper
             // Log the line after removing escape characters
             Log::info("Processed line: " . $line);
 
-            // Use regex to match the format and capture groups for both GPON and HWTC prefixes
+            // Use a more flexible regex to match the format and capture groups for both GPON and HWTC prefixes
             if (preg_match('/^(GPON|HWTC)\d+\/\d+:(\d+)\s+[^\s]+\s+[^\s]+\s+[^\s]+\s+([^\s]+)$/', trim($line), $matches)) {
                 $onus[(int)$matches[2]] = [
                     'OnuId' => (int)$matches[2],
