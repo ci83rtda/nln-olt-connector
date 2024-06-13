@@ -47,11 +47,11 @@ class OltHelper
             // Log the line after removing escape characters
             Log::info("Processed line: " . $line);
 
-            // Use a more flexible regex to match the format and capture groups for GPON prefixes
-            if (preg_match('/^GPON\d+\/\d+:(\d+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)$/', trim($line), $matches)) {
+            // Match the format with flexibility for spacing
+            if (preg_match('/^GPON\d+\/\d+:(\d+)\s+\S+\s+\S+\s+\S+\s+(\S+)$/', trim($line), $matches)) {
                 $onus[(int)$matches[1]] = [
                     'OnuId' => (int)$matches[1],
-                    'Sn' => trim($matches[5]),
+                    'Sn' => trim($matches[2]),
                 ];
 
                 // Log successfully matched ONUs
