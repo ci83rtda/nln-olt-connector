@@ -30,12 +30,21 @@ class OltHelper
 
     public static function parseExistingOnusOutput($output)
     {
+        // Log the raw output
+        Log::info("Raw ONUs output: " . $output);
+
         $lines = explode("\n", $output);
         $onus = [];
 
         foreach ($lines as $line) {
+            // Log each line before processing
+            Log::info("Processing line: " . $line);
+
             // Remove escape characters for cursor movement
             $line = preg_replace('/\x1B\[[0-9;]*[A-Za-z]/', '', $line);
+
+            // Log the line after removing escape characters
+            Log::info("Processed line: " . $line);
 
             // Use regex to match the format and capture groups for both GPON and HWTC prefixes
             if (preg_match('/^(GPON|HWTC)\d+\/\d+:(\d+)\s+[^\s]+\s+[^\s]+\s+[^\s]+\s+([^\s]+)$/', trim($line), $matches)) {
@@ -43,6 +52,12 @@ class OltHelper
                     'OnuId' => (int)$matches[2],
                     'Sn' => trim($matches[3]),
                 ];
+
+                // Log successfully matched ONUs
+                Log::info("Matched ONU: " . json_encode($onus[(int)$matches[2]]));
+            } else {
+                // Log lines that do not match
+                Log::warning("Unmatched line: " . $line);
             }
         }
 
