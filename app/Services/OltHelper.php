@@ -37,11 +37,11 @@ class OltHelper
             // Remove escape characters for cursor movement
             $line = preg_replace('/\x1B\[[0-9;]*[A-Za-z]/', '', $line);
 
-            // Use regex to match the format and capture groups
-            if (preg_match('/^GPON\d+\/\d+:(\d+)\s+\S+\s+\S+\s+\S+\s+(\S+)$/', trim($line), $matches)) {
-                $onus[(int)$matches[1]] = [
-                    'OnuId' => (int)$matches[1],
-                    'Sn' => trim($matches[2]),
+            // Use regex to match the format and capture groups for both GPON and HWTC prefixes
+            if (preg_match('/^(GPON|HWTC)\d+\/\d+:(\d+)\s+[^\s]+\s+[^\s]+\s+[^\s]+\s+([^\s]+)$/', trim($line), $matches)) {
+                $onus[(int)$matches[2]] = [
+                    'OnuId' => (int)$matches[2],
+                    'Sn' => trim($matches[3]),
                 ];
             }
         }
