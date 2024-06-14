@@ -140,17 +140,17 @@ class AddOnu extends Command
             return 1;
         }
 
+        $modeloOnu = $params['model'];
         if ( $params['model'] == 'V452'){
             $params['model'] = 'VSOLV452';
         }elseif ( $params['model'] == 'V642'){
             $params['model'] = 'VSOLV642';
         }
-        $onuModel = $params['model'];
 
         $blacboxDevice = $this->blackBox([
             //'deviceId' => $DeviceUuid,
-            'hostname' => $onuModel.'-'.$serialNumber,
-            "modelName" => $onuModel,
+            'hostname' => $modeloOnu.'-'.$serialNumber,
+            "modelName" => $modeloOnu,
             "systemName" => "pi-monitor",
             "vendorName" => $vendorName,
             "ipAddress" => $params['ip'],
