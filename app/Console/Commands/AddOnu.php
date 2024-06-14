@@ -215,7 +215,7 @@ class AddOnu extends Command
             $this->error('Failed to add ONU. Check logs for details.');
         }
 
-        $this->info("WiFi: {$wifiName}");
+        $this->info("WiFi: {$params['wifi_ssid'] }");
         $this->info("Contraseña:  {$wifiPassword}");
 
         return 0;
