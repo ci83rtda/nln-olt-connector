@@ -42,13 +42,13 @@ class OltHelper
 
             // Remove ANSI escape sequences and control characters
             $line = preg_replace('/\x1B\[[0-9;]*[A-Za-z]/', '', $line);
-//            $line = preg_replace('/[\r\n\x0b\x0c\e]/', '', $line);
+            $line = preg_replace('/[\r\n\x0b\x0c\e]/', '', $line);
 
             // Log the line after removing escape characters
             Log::info("Processed line: " . $line);
 
             // Use regex to match the ONU ID
-            if (preg_match('/^GPON\d+\/\d+:(\d+)/', trim($line), $matches)) {
+            if (preg_match('/GPON\d+\/\d+:(\d+)/', trim($line), $matches)) {
                 $onus[(int)$matches[1]] = (int)$matches[1];
 
                 // Log successfully matched ONU IDs
