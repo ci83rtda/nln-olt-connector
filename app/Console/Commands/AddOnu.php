@@ -57,8 +57,8 @@ class AddOnu extends Command
         ]);
 
         $clientsAddedServices = UispV1Access::doRequest("clients/services?clientId={$uispClientId}&statuses%5B%5D=7");
-        $clientsAddedServices = $clientsAddedServices->getBody()->getContents();
-        $filteredData = collect($clientsAddedServices)->where('servicePlanId',24)->first();
+        $clientsAddedServices1 = $clientsAddedServices->getBody()->getContents();
+        $filteredData = collect($clientsAddedServices1)->where('servicePlanId',24)->first();
 
         dd($clientsAddedServices,$filteredData);
 
