@@ -303,7 +303,7 @@ class AddOnu extends Command
         $letters = 'ascbtx';
         $password = '';
 
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 2; $i++) {
             // Add a pair of numbers
             $password .= $numbers[rand(0, 9)];
             $password .= $numbers[rand(0, 9)];
@@ -313,7 +313,7 @@ class AddOnu extends Command
             $password .= $letters[rand(0, strlen($letters) - 1)];
         }
 
-        // Add final pair of numbers
+        // Add the last set of 2 numbers
         $password .= $numbers[rand(0, 9)];
         $password .= $numbers[rand(0, 9)];
 
