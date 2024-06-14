@@ -172,7 +172,7 @@ class AddOnu extends Command
                     "name" => "eth1",
                     "mac" => $macaddress,
                     "type" => "eth",
-                    "addresses" => $params['ip'].'/'.$mascara
+                    "addresses" => [$params['ip'].'/'.$mascara]
                 ]
             ]
         ]);
