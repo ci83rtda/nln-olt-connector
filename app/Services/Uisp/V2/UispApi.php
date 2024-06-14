@@ -188,7 +188,7 @@ class UispApi
 
     public function activateServicePlan($servicePlanId, $servicePlanData)
     {
-        return $this->connector->makeRequest('PUT', "clients/services/{$servicePlanId}/activate-quoted", $servicePlanData);
+        return $this->connector->makeRequest('PATCH', "clients/services/{$servicePlanId}/activate-quoted", $servicePlanData);
     }
 
     public function deleteServicePlan($servicePlanId)
