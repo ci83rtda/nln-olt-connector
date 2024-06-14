@@ -177,7 +177,11 @@ class AddOnu extends Command
             ]
         ]);
 
-        $createdBlackboxDevice = $this->blackBox($blacboxDevice);
+        try {
+            $createdBlackboxDevice = $this->blackBox($blacboxDevice);
+        }catch (\Exception $exception){
+            $this->info($exception->getMessage());
+        }
 
         if($clientSiteData['data']['ucrm']['service']['status'] != 1) {
             $this->uispApi->activateServicePlan($clientServiceID, [
