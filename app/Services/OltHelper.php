@@ -48,14 +48,16 @@ class OltHelper
             Log::info("Processed line: " . $line);
 
             // Use regex to match the format and capture groups
-            if (preg_match('/^GPON\d+\/\d+:(\d+)\s+[A-Za-z0-9-]+\s+[a-z]+\s+[a-z]+\s+(\S+)$/', trim($line), $matches)) {
-                $onus[(int)$matches[1]] = [
-                    'OnuId' => (int)$matches[1],
-                    'Sn' => trim($matches[2]),
+            if (preg_match('/^(GPON\d+\/\d+):(\d+)\s+([A-Za-z0-9]+)\s+default\s+sn\s+(\S+)$/', trim($line), $matches)) {
+                $onus[(int)$matches[2]] = [
+                    'OnuId' => (int)$matches[2],
+                    'PortDetails' => trim($matches[1]),
+                    'Model' => trim($matches[3]),
+                    'Sn' => trim($matches[4]),
                 ];
 
                 // Log successfully matched ONUs
-                Log::info("Matched ONU: " . json_encode($onus[(int)$matches[1]]));
+                Log::info("Matched ONU: " . json_encode($onus[(int)$matches[2]]));
             } else {
                 // Log lines that do not match
                 Log::warning("Unmatched line: " . $line);
