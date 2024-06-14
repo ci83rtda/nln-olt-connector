@@ -148,7 +148,7 @@ class AddOnu extends Command
         }
 
         $blacboxDevice = $this->blackBox([
-            //'deviceId' => $DeviceUuid,
+            'deviceId' => $DeviceUuid,
             'hostname' => $modeloOnu.'-'.$serialNumber,
             "modelName" => $modeloOnu,
             "systemName" => "pi-monitor",
