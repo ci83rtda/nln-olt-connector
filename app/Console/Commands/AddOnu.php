@@ -96,6 +96,8 @@ class AddOnu extends Command
 
         $clientSiteData = collect($clientSiteData)->where('id', $clientSiteId)->first();
 
+        dd($clientSiteData, $clientSiteId);
+
         $clientServiceID = $clientSiteData['ucrm']['service']['id'];
         $clientShortName = $this->shortenName($clientSiteData['ucrm']['client']['name']);
         $wifiName = $this->WifiName($clientSiteData['ucrm']['client']['name']);
