@@ -60,8 +60,6 @@ class AddOnu extends Command
         $clientsAddedServices = $clientsAddedServices->getBody()->getContents();
         $filteredData = collect($clientsAddedServices)->where('servicePlanId',24)->first();
 
-        dd($filteredData,$clientsAddedServices);
-
         $sites = [];
         $clientSiteData = [];
         $tableData = [];
