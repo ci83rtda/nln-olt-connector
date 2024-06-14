@@ -36,8 +36,6 @@ class OltHelper
         $lines = explode("\n", $output);
         $onus = [];
 
-        Log::info("Raw onu lines: " . json_encode($lines));
-
         foreach ($lines as $line) {
             // Log each line before processing
             Log::info("Processing line: " . $line);
@@ -49,7 +47,7 @@ class OltHelper
             // Log the line after removing escape characters
             Log::info("Processed line: " . $line);
 
-            // Match the format with flexibility for spacing
+            // Use regex to match the format and capture groups
             if (preg_match('/^GPON\d+\/\d+:(\d+)\s+[A-Za-z0-9-]+\s+[a-z]+\s+[a-z]+\s+(\S+)$/', trim($line), $matches)) {
                 $onus[(int)$matches[1]] = [
                     'OnuId' => (int)$matches[1],
