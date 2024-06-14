@@ -237,7 +237,7 @@ class AddOnu extends Command
         return 'unknown';
     }
 
-    private function shortenName($fullName)
+    private function shortenName($fullName): string
     {
         $parts = explode(', ', $fullName);
         if (count($parts) == 2) {
@@ -274,15 +274,10 @@ class AddOnu extends Command
         return implode('-', $shortenedName);
     }
 
-    public function WifiName($name)
+    public function WifiName($name): string
     {
-        $result = [];
-
         // Split the name into parts
         $nameParts = explode(' ', $name);
-
-        // Determine the full name
-        $fullName = $name;
 
         // Determine the short name version
         if (count($nameParts) > 1) {
@@ -296,14 +291,10 @@ class AddOnu extends Command
             $shortName = $lastName . '-' . $initial;
         }
 
-        // Add to the result array
-        $result[] = $fullName;
-        $result[] = $shortName;
-
-        return $result;
+        return $shortName;
     }
 
-    public function generatePassword()
+    public function generatePassword(): string
     {
         $numbers = '0123456789';
         $letters = 'ascbtx';
@@ -331,7 +322,7 @@ class AddOnu extends Command
         return $this->uispApi->createBlackboxDevice($data);
     }
 
-    public function getSubnetMask($cidr)
+    public function getSubnetMask($cidr): string
     {
         // Check if the provided CIDR is within the valid range (0 to 32)
         if ($cidr < 0 || $cidr > 32) {
