@@ -96,11 +96,9 @@ class AddOnu extends Command
 
         $clientSiteData = collect($clientSiteData)->where('id', $clientSiteId)->first();
 
-        dd($clientSiteData, $clientSiteId);
-
-        $clientServiceID = $clientSiteData['ucrm']['service']['id'];
-        $clientShortName = $this->shortenName($clientSiteData['ucrm']['client']['name']);
-        $wifiName = $this->WifiName($clientSiteData['ucrm']['client']['name']);
+        $clientServiceID = $clientSiteData['data']['ucrm']['service']['id'];
+        $clientShortName = $this->shortenName($clientSiteData['data']['ucrm']['client']['name']);
+        $wifiName = $this->WifiName($clientSiteData['data']['ucrm']['client']['name']);
         $wifiPassword = $this->generatePassword();
 
 
@@ -181,7 +179,7 @@ class AddOnu extends Command
 
         $createdBlackboxDevice = $this->blackBox($blacboxDevice);
 
-        if($clientSiteData['ucrm']['service']['status'] != 1) {
+        if($clientSiteData['data']['ucrm']['service']['status'] != 1) {
             $this->uispApi->activateServicePlan($clientServiceID, [
                 'activeFrom' => now()->format('Y-m-d\TH:i:sO'),
                 'invoicingStart' => now()->format('Y-m-d\TH:i:sO')
