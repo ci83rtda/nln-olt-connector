@@ -41,8 +41,22 @@ return [
         'password' => env('OLT_PASSWORD'),
         'enable_password' => env('OLT_PASSWORD'),
     ],
+
     'central_api' => [
         'url' => 'https://3d6e-71-26-207-97.ngrok-free.app'
-    ]
+    ],
+
+    'uisp' => [
+        'api' => [
+            'v1'=> [
+                'url' => env('UISP_V1_URL'),
+                'token' => env('UISP_V1_TOKEN')
+            ],
+            'v2' => [
+                'url' => env('UISP_V2_URL'),
+                'token' => env('UISP_V2_TOKEN')
+            ]
+        ]
+    ],
 
 ];
