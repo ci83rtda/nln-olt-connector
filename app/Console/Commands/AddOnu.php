@@ -184,14 +184,14 @@ class AddOnu extends Command
         }
 
         if($clientSiteData['data']['ucrm']['service']['status'] != 1) {
-            $this->uispApi->activateServicePlan($clientServiceID, [
+            UispV1Access::doRequest("clients/services/{$clientServiceID}/activate-quoted",'PATCH',[
                 'activeFrom' => now()->format('Y-m-d\TH:i:sO'),
                 'invoicingStart' => now()->format('Y-m-d\TH:i:sO')
             ]);
         }
 
         if ($activateCATV == 'yes'){
-            $this->uispApi->activateServicePlan($filteredData['id'], [
+            UispV1Access::doRequest("clients/services/{$filteredData['id']}/activate-quoted",'PATCH',[
                 'activeFrom' => now()->format('Y-m-d\TH:i:sO'),
                 'invoicingStart' => now()->format('Y-m-d\TH:i:sO')
             ]);
