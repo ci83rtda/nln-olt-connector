@@ -197,10 +197,10 @@ class AddOnu extends Command
             ]);
         }
 
-        $this->uispApi->createDevicesAuthorization([
-            'siteId' => $clientServiceID,
-            'deviceIds' => [$createdBlackboxDevice['data']['deviceId"']],
-        ]);
+//        $this->uispApi->createDevicesAuthorization([
+//            'siteId' => $clientServiceID,
+//            'deviceIds' => [$createdBlackboxDevice['data']['deviceId"']],
+//        ]);
 
         try {
             Log::info('Attempting to connect to OLT');
