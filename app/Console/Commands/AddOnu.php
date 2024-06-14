@@ -191,7 +191,7 @@ class AddOnu extends Command
         }
 
         if ($activateCATV == 'yes'){
-            UispV1Access::doRequest("clients/services/{$filteredData['id']}/activate-quoted",'PATCH',[
+            UispV1Access::doRequest("clients/services/{$filteredData->id}/activate-quoted",'PATCH',[
                 'activeFrom' => now()->format('Y-m-d\TH:i:sO'),
                 'invoicingStart' => now()->format('Y-m-d\TH:i:sO')
             ]);
