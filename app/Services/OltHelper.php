@@ -36,6 +36,8 @@ class OltHelper
         $lines = explode("\n", $output);
         $onus = [];
 
+        Log::info("Raw onu lines: " . json_encode($lines));
+
         foreach ($lines as $line) {
             // Log each line before processing
             Log::info("Processing line: " . $line);
