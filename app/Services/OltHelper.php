@@ -42,22 +42,17 @@ class OltHelper
 
             // Remove ANSI escape sequences and control characters
             $line = preg_replace('/\x1B\[[0-9;]*[A-Za-z]/', '', $line);
-//            $line = preg_replace('/[\r\n\x0b\x0c\e]/', '', $line);
+            $line = preg_replace('/[\r\n\x0b\x0c\e]/', '', $line);
 
             // Log the line after removing escape characters
             Log::info("Processed line: " . $line);
 
-            // Use regex to match the format and capture groups
-            if (preg_match('/^(GPON\d+\/\d+):(\d+)\s+([A-Za-z0-9]+)\s+default\s+sn\s+(\S+)$/', trim($line), $matches)) {
-                $onus[(int)$matches[2]] = [
-                    'OnuId' => (int)$matches[2],
-                    'PortDetails' => trim($matches[1]),
-                    'Model' => trim($matches[3]),
-                    'Sn' => trim($matches[4]),
-                ];
+            // Use regex to match the ONU ID
+            if (preg_match('/^GPON\d+\/\d+:(\d+)/', trim($line), $matches)) {
+                $onus[(int)$matches[1]] = (int)$matches[1];
 
-                // Log successfully matched ONUs
-                Log::info("Matched ONU: " . json_encode($onus[(int)$matches[2]]));
+                // Log successfully matched ONU IDs
+                Log::info("Matched ONU ID: " . $matches[1]);
             } else {
                 // Log lines that do not match
                 Log::warning("Unmatched line: " . $line);
