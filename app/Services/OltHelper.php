@@ -30,32 +30,17 @@ class OltHelper
 
     public static function parseExistingOnusOutput($output)
     {
-        // Log the raw output
-        Log::info("Raw ONUs output: " . $output);
-
         $lines = explode("\n", $output);
         $onus = [];
 
         foreach ($lines as $line) {
-            // Log each line before processing
-            Log::info("Processing line: " . $line);
-
             // Remove ANSI escape sequences and control characters
             $line = preg_replace('/\x1B\[[0-9;]*[A-Za-z]/', '', $line);
             $line = preg_replace('/[\r\n\x0b\x0c\e]/', '', $line);
 
-            // Log the line after removing escape characters
-            Log::info("Processed line: " . $line);
-
             // Use regex to match the ONU ID
             if (preg_match('/GPON\d+\/\d+:(\d+)/', trim($line), $matches)) {
                 $onus[(int)$matches[1]] = (int)$matches[1];
-
-                // Log successfully matched ONU IDs
-                Log::info("Matched ONU ID: " . $matches[1]);
-            } else {
-                // Log lines that do not match
-                Log::warning("Unmatched line: " . $line);
             }
         }
 
