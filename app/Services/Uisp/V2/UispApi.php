@@ -69,7 +69,7 @@ class UispApi
 
     public function createBlackboxDevice($deviceData)
     {
-        return $this->connector->makeRequest('POST', '/devices/blackboxes/config', $deviceData);
+        return $this->connector->makeRequest('POST', 'devices/blackboxes/config', $deviceData);
     }
 
     public function updateDevice($deviceId, $deviceData)
