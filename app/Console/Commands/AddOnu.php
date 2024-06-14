@@ -110,6 +110,9 @@ class AddOnu extends Command
         $params['description'] = $uispClientId.'-'.$clientServiceID.'-'.$clientShortName;
         $params['vlanid'] = $this->askWithValidation('Enter the VLAN ID');
 
+        $this->info($clientShortName);
+        $this->info($wifiName);
+
         if ($onuType === 'vsol') {
             $vendorName = 'Vsol';
             $params['model'] = $this->choice('Enter the model number',['V452','V642'],'V452');
@@ -119,7 +122,7 @@ class AddOnu extends Command
             $macaddress = $this->askWithValidation('Enter ONU MAC address');
             $params['dns_master'] = '1.1.1.1';
             $params['dns_slave'] = '8.8.8.8';
-            $params['wifi_ssid'] = $wifiName;
+            $params['wifi_ssid'] = $this->askWithValidation('Enter the WiFi SSID');
             $params['shared_key'] = $wifiPassword;
             if ($activateCATV == 'yes'){
                 $params['catv'] = 'enable';
