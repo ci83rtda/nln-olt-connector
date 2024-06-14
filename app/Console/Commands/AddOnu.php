@@ -60,6 +60,9 @@ class AddOnu extends Command
         $clientsAddedServices = json_encode($clientsAddedServices->getBody()->getContents()) ?? [];
         $filteredData = collect($clientsAddedServices)->where('servicePlanId',24)->first();
 
+
+        dd($clientsAddedServices,$filteredData);
+
         $sites = [];
         $clientSiteData = [];
         $tableData = [];
