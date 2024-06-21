@@ -274,7 +274,7 @@ class OltConnector
         $this->executeCommand('configure terminal', false);
 
         // Iterate through all ports to find the activation serial
-        for ($port = 0; $port <= 8; $port++) {
+        for ($port = 1; $port <= 8; $port++) {
             $this->executeCommand("interface gpon 0/$port", false);
 
             // Fetch auto-find ONUs
