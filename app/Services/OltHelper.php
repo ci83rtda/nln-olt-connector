@@ -266,14 +266,18 @@ class OltHelper
             $line = preg_replace('/\x1B\[[0-9;]*[A-Za-z]/', '', $line);
             $line = preg_replace('/[\r\n\x0b\x0c\e]/', '', $line);
 
-            // Use regex to match the ONU details
-            if (preg_match('/^(GPON\d+\/\d+)\s+(\S+)\s+(\S+)/', trim($line), $matches)) {
-                Log::info("Matched ONU: " . json_encode($matches));
+            // Use fixed-width substrings to extract columns
+            if (strlen(trim($line)) > 0 && strpos($line, 'GPON') !== false) {
+                $onuIndex = substr($line, 0, 20);
+                $sn = substr($line, 20, 25);
+                $state = substr($line, 45, 10);
+
                 $onus[] = [
-                    'OnuIndex' => $matches[1],
-                    'Sn' => $matches[2],
-                    'State' => $matches[3],
+                    'OnuIndex' => trim($onuIndex),
+                    'Sn' => trim($sn),
+                    'State' => trim($state),
                 ];
+                Log::info("Matched ONU: " . json_encode(end($onus)));
             } else {
                 Log::warning("Unmatched line: " . $line);
             }
