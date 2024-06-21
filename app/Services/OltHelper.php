@@ -268,11 +268,14 @@ class OltHelper
 
             // Use regex to match the ONU details
             if (preg_match('/^(GPON\d+\/\d+):\s+(\S+)\s+(\S+)/', trim($line), $matches)) {
+                Log::info("Matched ONU: " . json_encode($matches));
                 $onus[] = [
                     'OnuIndex' => $matches[1],
                     'Sn' => $matches[2],
                     'State' => $matches[3],
                 ];
+            } else {
+                Log::warning("Unmatched line: " . $line);
             }
         }
 
