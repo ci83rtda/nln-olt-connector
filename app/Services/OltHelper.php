@@ -267,7 +267,8 @@ class OltHelper
             $line = preg_replace('/[\r\n\x0b\x0c\e]/', '', $line);
 
             // Match the OnuIndex and Sn
-            if (preg_match('/(GPON\d+\/\d+:\d+)\s+(GPON\w{8}|HWTC\w{8})/', $line, $matches)) {
+            if (preg_match('/(GPON\d+\/\d+:\d+)(GPON\w{8}|HWTC\w{8})(\S+)/', $line, $matches)) {
+
                 $onus[] = [
                     'OnuIndex' => $matches[1],
                     'Sn' => $matches[2],
