@@ -266,10 +266,12 @@ class OltHelper
             $line = preg_replace('/\x1B\[[0-9;]*[A-Za-z]/', '', $line);
             $line = preg_replace('/[\r\n\x0b\x0c\e]/', '', $line);
 
-            // Use regex to match the ONU ID and Serial Number
-            if (preg_match('/GPON\d+\/\d+:\s+(\S+)/', trim($line), $matches)) {
+            // Use regex to match the ONU details
+            if (preg_match('/^(GPON\d+\/\d+):\s+(\S+)\s+(\S+)/', trim($line), $matches)) {
                 $onus[] = [
-                    'Sn' => $matches[1]
+                    'OnuIndex' => $matches[1],
+                    'Sn' => $matches[2],
+                    'State' => $matches[3],
                 ];
             }
         }
