@@ -268,4 +268,35 @@ class OltConnector
         return $status;
     }
 
+    public function checkActivationSerial($activationSerial)
+    {
+        $this->enable();
+        $this->executeCommand('configure terminal', false);
+
+        // Iterate through all ports to find the activation serial
+        for ($port = 0; $port <= 8; $port++) {
+            $this->executeCommand("interface gpon 0/$port", false);
+
+            // Fetch existing ONUs
+            $existingOnusOutput = $this->executeCommand('show onu info');
+            $onus = OltHelper::parseExistingOnusOutput($existingOnusOutput);
+
+            foreach ($onus as $onu) {
+                if (strpos($onu['Sn'], $activationSerial) !== false) {
+                    $this->closeConnection();
+                    return [
+                        'exists' => true,
+                        'port' => $port
+                    ];
+                }
+            }
+        }
+
+        $this->closeConnection();
+        return [
+            'exists' => false,
+            'port' => null
+        ];
+    }
+
 }

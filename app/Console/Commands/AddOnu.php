@@ -216,7 +216,7 @@ class AddOnu extends Command
         }
 
         $this->info("WiFi: {$params['wifi_ssid'] }");
-        $this->info("Contraseña:  {$wifiPassword}");
+        $this->info("Contraseña: {$wifiPassword}");
 
         return 0;
     }
