@@ -269,8 +269,8 @@ class OltHelper
             // Use fixed-width substrings to extract columns
             if (strlen(trim($line)) > 0 && strpos($line, 'GPON') !== false) {
                 $onuIndex = substr($line, 0, 20);
-                $sn = substr($line, 20, 25);
-                $state = substr($line, 45, 10);
+                $sn = substr($line, 21, 24);
+                $state = substr($line, 46, 10);
 
                 $onus[] = [
                     'OnuIndex' => trim($onuIndex),
