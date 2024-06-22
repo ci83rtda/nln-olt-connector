@@ -280,9 +280,18 @@ class AddOnu extends Command
         return implode('-', $shortenedName);
     }
 
-    public function WifiName($fullName): string
+    public function WifiName($fullName, $isLastNameFirst = true): string
     {
+        $fullName = preg_replace('/[^\w\s]/u', '', $fullName);
+
+        // Split the full name into an array of words
         $names = explode(' ', $fullName);
+
+        if ($isLastNameFirst) {
+            // Reverse the order of names if last name is first
+            $names = array_reverse($names);
+        }
+
         $firstNameInitial = strtoupper(substr($names[0], 0, 1));
         $lastName = '';
 
