@@ -280,24 +280,19 @@ class AddOnu extends Command
         return implode('-', $shortenedName);
     }
 
-    public function WifiName($name): string
+    public function WifiName($fullName): string
     {
-        // Split the name into parts
-        $nameParts = explode(' ', $name);
+        $names = explode(' ', $fullName);
+        $firstNameInitial = strtoupper(substr($names[0], 0, 1));
+        $lastName = '';
 
-        // Determine the short name version
-        if (count($nameParts) > 1) {
-            $lastName = $nameParts[count($nameParts) - 2];
-            $initial = substr($nameParts[0], 0, 1);
-            $shortName = $lastName . '-' . $initial;
+        if (count($names) >= 3) {
+            $lastName = $names[count($names) - 2];
         } else {
-            // Handle cases with only one part
-            $lastName = $nameParts[0];
-            $initial = substr($nameParts[0], 0, 1);
-            $shortName = $lastName . '-' . $initial;
+            $lastName = $names[1];
         }
 
-        return $shortName;
+        return $lastName . '-' . $firstNameInitial;
     }
 
     public function generatePassword(): string
