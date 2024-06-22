@@ -101,6 +101,8 @@ class AddOnu extends Command
         $wifiName = $this->WifiName($clientSiteData['data']['ucrm']['client']['name']);
         $wifiPassword = $this->generatePassword();
 
+        $this->info($clientShortName);
+        $this->info($wifiName);
 
         $port = $this->askWithValidation('Enter the GPON port number (e.g., 5)');
         $serialNumber = $this->askWithValidation('Enter the ONU serial number (e.g., GPON009777F0)');
@@ -109,9 +111,6 @@ class AddOnu extends Command
         $params = [];
         $params['description'] = $uispClientId.'-'.$clientServiceID.'-'.$clientShortName;
         $params['vlanid'] = $this->askWithValidation('Enter the VLAN ID');
-
-        $this->info($clientShortName);
-        $this->info($wifiName);
 
         if ($onuType === 'vsol') {
             $vendorName = 'Vsol';
@@ -282,14 +281,19 @@ class AddOnu extends Command
 
     public function WifiName($fullName, $isLastNameFirst = true): string
     {
-        $fullName = preg_replace('/[^\w\s]/u', '', $fullName);
-
-        // Split the full name into an array of words
-        $names = explode(' ', $fullName);
+        // Remove punctuation
+        $fullName = preg_replace('/[^\w\s,]/u', '', $fullName);
 
         if ($isLastNameFirst) {
-            // Reverse the order of names if last name is first
-            $names = array_reverse($names);
+            $parts = explode(',', $fullName);
+            if (count($parts) < 2) {
+                return "Invalid format";
+            }
+            $lastNamePart = trim($parts[0]);
+            $firstNamePart = trim($parts[1]);
+            $names = array_merge(explode(' ', $firstNamePart), explode(' ', $lastNamePart));
+        } else {
+            $names = explode(' ', $fullName);
         }
 
         $firstNameInitial = strtoupper(substr($names[0], 0, 1));
