@@ -24,7 +24,7 @@ class GetPendingOnuStatusJob extends BaseTaskJob
         $task = $this->task;
         Log::info("ONU status retrieved ". json_encode($task));
         try {
-            $request = json_decode($task['request']);
+            $request = $task['request'];
             $activationSerial = $request->activationSerial;
 
             $result = $oltConnector->checkActivationSerial($activationSerial);
