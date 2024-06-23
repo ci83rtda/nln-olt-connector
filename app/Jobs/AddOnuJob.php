@@ -16,12 +16,12 @@ class AddOnuJob extends BaseTaskJob
     public function handle(): void
     {
 
-        $oltConnector = new OltConnector(
-            config('services.olt.host'),
-            config('services.olt.username'),
-            config('services.olt.password'),
-            config('services.olt.enable_password')
-        );
+//        $oltConnector = new OltConnector(
+//            config('services.olt.host'),
+//            config('services.olt.username'),
+//            config('services.olt.password'),
+//            config('services.olt.enable_password')
+//        );
 
         $task = $this->task;
 //        try {
@@ -60,6 +60,7 @@ class AddOnuJob extends BaseTaskJob
 //        }
 
         // Ensure the job stops after handling the task
-        return;
+
+        $this->reportCompletion(3,['ssid'=>$task['wifiName'],'password' => $task['wifiPassword']]);
     }
 }
