@@ -11,7 +11,7 @@ class GetPendingOnuStatusJob extends BaseTaskJob
     /**
      * Execute the job.
      */
-    public function handle(OltConnector $oltConnector = null): void
+    public function handle(): void
     {
 
         $oltConnector = new OltConnector(
