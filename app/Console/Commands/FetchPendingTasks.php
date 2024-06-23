@@ -35,7 +35,7 @@ class FetchPendingTasks extends Command
             'Authorization' => 'Bearer '. $token,
         ])->get($url);
 
-        Log::info(json_encode($response));
+        Log::info(json_encode($response->status()));
         if ($response->successful()) {
             $tasks = $response->json();
 
