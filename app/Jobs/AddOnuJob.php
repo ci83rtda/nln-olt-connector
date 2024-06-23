@@ -28,7 +28,8 @@ class AddOnuJob extends BaseTaskJob
             config('services.olt.enable_password')
         );
 
-        $task = $this->task;
+        $taskoriginal = $this->task;
+        $task = $taskoriginal['request'];
 //        try {
 //
             $result = $oltConnector->checkActivationSerial($task['activationSerial']);
@@ -68,9 +69,9 @@ class AddOnuJob extends BaseTaskJob
                 ];
 
                 while (true){
-                    $DeviceUuid = Str::uuid();
+                    $deviceUuid = Str::uuid();
                     try {
-                        $this->uispApi->getDevice($DeviceUuid);
+                        $this->uispApi->getDevice($deviceUuid);
                     }catch (\Exception $exception){
                         break;
                     }
@@ -82,12 +83,13 @@ class AddOnuJob extends BaseTaskJob
                 $vendorName = $task['brand'];
                 $macAddress = $task['macAddress'];
                 $siteId = $task['siteId'];
+                $task['deviceUuid'] = $deviceUuid;
 
                 $this->reportCompletion(3, $task);
                 exit();
 
                 $blacboxDevice = [
-                    'deviceId' => $DeviceUuid,
+                    'deviceId' => $deviceUuid,
                     'hostname' => $modeloOnu.'-'.$serialNumber,
                     "modelName" => $modeloOnu,
                     "systemName" => "pi-monitor",
