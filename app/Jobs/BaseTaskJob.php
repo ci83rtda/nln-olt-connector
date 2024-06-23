@@ -40,23 +40,25 @@ abstract class BaseTaskJob implements ShouldQueue
      * Report the task completion to the central API.
      *
      * @param string $status
-     * @param string $message
+     * @param array $response
      * @return void
      */
-    protected function reportCompletion($status, $message)
+    protected function reportCompletion($status, $response)
     {
-        $url = config('services.central_api.url') . '/task/callback';
+        $url = config('services.central_api.url') . '/task/'.$this->task['id'];
+        $token = config('services.central_api.token');
 
-        $response = Http::post($url, [
-            'request_id' => $this->task['request_id'],
+        $apiResponse = Http::withHeaders([
+            'Authorization' => 'Bearer '. $token,
+        ])->put($url, [
             'status' => $status,
-            'message' => $message,
+            'response' => json_encode($response),
         ]);
 
-        if ($response->successful()) {
-            Log::info("Task completion reported for request ID {$this->task['request_id']}.");
+        if ($apiResponse->successful()) {
+            Log::info("Task completion reported for request ID {$this->task['id']}.");
         } else {
-            Log::error("Failed to report task completion for request ID {$this->task['request_id']}.");
+            Log::error("Failed to report task completion for request ID {$this->task['id']}.");
         }
     }
 }

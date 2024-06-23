@@ -43,7 +43,8 @@ return [
     ],
 
     'central_api' => [
-        'url' => 'https://3d6e-71-26-207-97.ngrok-free.app'
+        'url' => env('CENTRAL_API_URL'),
+        'token' => env('CENTRAL_API_TOKEN'),
     ],
 
     'uisp' => [

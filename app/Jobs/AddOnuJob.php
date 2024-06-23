@@ -16,21 +16,40 @@ class AddOnuJob extends BaseTaskJob
     public function handle(OltConnector $oltConnector)
     {
         $task = $this->task;
-        try {
-            $port = $task['port'];
-            $onuId = $task['onuId'];
-            $serialNumber = $task['serialNumber'];
-            $profile = $task['profile'];
-            $description = $task['description'];
-
-            $oltConnector->addOnu($port, $onuId, $serialNumber, $profile, $description);
-
-            Log::info("ONU added with ID $onuId on port $port.");
-            $this->reportCompletion('success', 'ONU added successfully.');
-        } catch (\Exception $e) {
-            Log::error('Error adding ONU: ' . $e->getMessage());
-            $this->reportCompletion('error', $e->getMessage());
-        }
+//        try {
+//
+//            $result = $oltConnector->checkActivationSerial($task['activationSerial']);
+//
+//            if ($result['exists']) {
+//
+//                $port = $result['port'];
+//                $onuId = $task['onuId'];
+//                $serialNumber = $task['serialNumber'];
+//                $profile = $task['profile'];
+//                $description = $task['description'];
+//
+////                $params = [
+////                    '' => $task[''],
+////                    '' => $task[''],
+////                    '' => $task[''],
+////                    '' => $task[''],
+////                    '' => $task[''],
+////                ];
+//
+////                $oltConnector->addOnu($port, $serialNumber, $params);
+//
+//            } else {
+//
+//            }
+//
+//
+//
+//            Log::info("ONU added with ID $onuId on port $port.");
+//            $this->reportCompletion('success', 'ONU added successfully.');
+//        } catch (\Exception $e) {
+//            Log::error('Error adding ONU: ' . $e->getMessage());
+//            $this->reportCompletion('error', $e->getMessage());
+//        }
 
         // Ensure the job stops after handling the task
         return;
