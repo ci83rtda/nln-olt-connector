@@ -11,8 +11,15 @@ class GetPendingOnuStatusJob extends BaseTaskJob
     /**
      * Execute the job.
      */
-    public function handle(OltConnector $oltConnector): void
+    public function handle(OltConnector $oltConnector = null): void
     {
+
+        $oltConnector = new OltConnector(
+            config('services.olt.host'),
+            config('services.olt.username'),
+            config('services.olt.password'),
+            config('services.olt.enable_password')
+        );
 
         $task = $this->task;
         Log::info("ONU status retrieved ". json_encode($task));

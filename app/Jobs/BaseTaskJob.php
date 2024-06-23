@@ -34,7 +34,7 @@ abstract class BaseTaskJob implements ShouldQueue
      *
      * @return void
      */
-    abstract public function handle(OltConnector $oltConnector);
+    abstract public function handle(OltConnector $oltConnector = null): void;
 
     /**
      * Report the task completion to the central API.
