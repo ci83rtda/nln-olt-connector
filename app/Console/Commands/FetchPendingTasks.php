@@ -47,7 +47,9 @@ class FetchPendingTasks extends Command
             $tasks = $response->json();
 
             foreach ($tasks as $task) {
-                event(new TaskFetched($task));
+                if ($task->status == 1) {
+                    event(new TaskFetched($task));
+                }
             }
 
             $this->info('Pending tasks fetched and dispatched.');
