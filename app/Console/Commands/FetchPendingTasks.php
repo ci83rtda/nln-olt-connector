@@ -29,7 +29,7 @@ class FetchPendingTasks extends Command
      */
     public function handle()
     {
-        $url = config('services.central_api.url') . '/task/pending';
+        $url = config('services.central_api.url') . 'task/pending';
         $token = config('services.central_api.token');
         $response = Http::withHeaders([
             'Authorization' => 'Bearer '. $token,
