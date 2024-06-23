@@ -52,7 +52,7 @@ abstract class BaseTaskJob implements ShouldQueue
             'Authorization' => 'Bearer '. $token,
         ])->put($url, [
             'status' => $status,
-            'response' => json_encode($response),
+            'response' => $response,
         ]);
 
         if ($apiResponse->successful()) {
