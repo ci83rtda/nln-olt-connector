@@ -32,9 +32,9 @@ class AddOnuJob extends BaseTaskJob
         $task = $taskoriginal['request'];
 //        try {
 //
-            $result = $oltConnector->checkActivationSerial($task['activationSerial']);
+//            $result = $oltConnector->checkActivationSerial($task['activationSerial']);
 
-            if ($result['exists']) {
+//            if ($result['exists']) {
 
                 $port = $task['onuPort'];
                 $activationSerial = $task['activationSerial'];
@@ -84,8 +84,8 @@ class AddOnuJob extends BaseTaskJob
                 $siteId = $task['siteId'];
                 $task['deviceUuid'] = $deviceUuid;
 
-                $this->reportCompletion(3, $task);
-                exit();
+                $this->reportCompletion(5, $task);
+                return;
 
                 $blacboxDevice = [
                     'deviceId' => $deviceUuid,
@@ -127,9 +127,9 @@ class AddOnuJob extends BaseTaskJob
 //
                 $oltConnector->addOnu($port, $activationSerial, $params);
 //
-            } else {
-                $this->reportCompletion(5, ['message' => 'ONU no esta en linea']);
-            }
+//            } else {
+//                $this->reportCompletion(5, ['message' => 'ONU no esta en linea']);
+//            }
 //
 //
 //
