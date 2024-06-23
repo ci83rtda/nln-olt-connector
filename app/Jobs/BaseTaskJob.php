@@ -45,7 +45,7 @@ abstract class BaseTaskJob implements ShouldQueue
      */
     protected function reportCompletion($status, $response)
     {
-        $url = config('services.central_api.url') . '/task/'.$this->task['id'];
+        $url = config('services.central_api.url') . 'tasks/'.$this->task['id'];
         $token = config('services.central_api.token');
 
         $apiResponse = Http::withHeaders([
