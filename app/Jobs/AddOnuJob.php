@@ -61,6 +61,6 @@ class AddOnuJob extends BaseTaskJob
 
         // Ensure the job stops after handling the task
 
-        $this->reportCompletion(3,['ssid'=>$task['wifiName'],'password' => $task['wifiPassword']]);
+        $this->reportCompletion(3,['ssid'=>$task['request']['wifiName'],'password' => $task['request']['wifiPassword']]);
     }
 }
