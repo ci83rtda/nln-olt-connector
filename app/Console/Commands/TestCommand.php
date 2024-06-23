@@ -37,8 +37,9 @@ class TestCommand extends Command
     {
 
         $jobs = DB::table('jobs')->get();
+        $failed_jobs = DB::table('failed_jobs')->get();
 
-        dd($jobs);
+        dd($jobs,$failed_jobs);
 
 //        $this->info('Getting all the clients from UISP.');
 //        $quotedServices = UispV1Access::doRequest('clients/services?statuses[]=7');
