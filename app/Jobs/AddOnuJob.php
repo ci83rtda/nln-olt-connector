@@ -13,8 +13,16 @@ class AddOnuJob extends BaseTaskJob
      * @param OltConnector $oltConnector
      * @return void
      */
-    public function handle(OltConnector $oltConnector)
+    public function handle(): void
     {
+
+        $oltConnector = new OltConnector(
+            config('services.olt.host'),
+            config('services.olt.username'),
+            config('services.olt.password'),
+            config('services.olt.enable_password')
+        );
+
         $task = $this->task;
 //        try {
 //
