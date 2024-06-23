@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Services\Uisp\V1\UispV1Access;
 use App\Services\Uisp\V2\UispApi;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class TestCommand extends Command
 {
@@ -26,7 +27,7 @@ class TestCommand extends Command
     public function __construct()
     {
         parent::__construct();
-        $this->uispApi = new UispApi();
+        //$this->uispApi = new UispApi();
     }
 
     /**
@@ -34,17 +35,22 @@ class TestCommand extends Command
      */
     public function handle()
     {
+
+        $jobs = DB::table('jobs')->get();
+
+        dd($jobs);
+
 //        $this->info('Getting all the clients from UISP.');
 //        $quotedServices = UispV1Access::doRequest('clients/services?statuses[]=7');
 //
 //        $quotedServices = json_decode($quotedServices->getBody()->getContents());
 //
 //        $this->info('Getting all the clients from UISP.');
-        $quotedServices = UispV1Access::doRequest('clients?query=johan');
-
-        $quotedServices = json_decode($quotedServices->getBody()->getContents());
-
-        dd($quotedServices);
+//        $quotedServices = UispV1Access::doRequest('clients?query=johan');
+//
+//        $quotedServices = json_decode($quotedServices->getBody()->getContents());
+//
+//        dd($quotedServices);
 //
 //
 //
