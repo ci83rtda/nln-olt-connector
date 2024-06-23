@@ -6,6 +6,7 @@ use App\Services\OltConnector;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
@@ -43,17 +44,22 @@ abstract class BaseTaskJob implements ShouldQueue
      * @param array $response
      * @return void
      */
-    protected function reportCompletion($status, $response)
+    protected function reportCompletion($status, $response): void
     {
         $url = config('services.central_api.url') . 'tasks/'.$this->task['id'];
         $token = config('services.central_api.token');
 
-        $apiResponse = Http::withHeaders([
-            'Authorization' => 'Bearer '. $token,
-        ])->put($url, [
-            'status' => $status,
-            'response' => $response,
-        ]);
+        try {
+
+            $apiResponse = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $token,
+            ])->put($url, [
+                'status' => $status,
+                'response' => $response,
+            ]);
+        }catch (ConnectionException $connectionException){
+            Log::info("Un error ocurrio:  {$connectionException->getMessage()}.");
+        }
 
         if ($apiResponse->successful()) {
             Log::info("Task completion reported for request ID {$this->task['id']}.");
