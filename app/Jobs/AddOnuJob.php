@@ -65,7 +65,6 @@ class AddOnuJob extends BaseTaskJob
                     'model' => $task['model'],
                     'catv' => $task['catv'],
                     'hasPendingCatv' => $task['hasPendingCatv'],
-                    '' => $task[''],
                 ];
 
                 while (true){
