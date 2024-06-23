@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Events\TaskFetched;
@@ -31,11 +32,16 @@ class FetchPendingTasks extends Command
     {
         $url = config('services.central_api.url') . 'tasks/pending';
         $token = config('services.central_api.token');
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer '. $token,
-        ])->get($url);
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $token,
+            ])->get($url);
 
-        Log::info(json_encode($response->reason()));
+        }catch (ConnectionException $connectionException){
+            Log::info($connectionException->getMessage());
+        }
+
+
         if ($response->successful()) {
             $tasks = $response->json();
 
