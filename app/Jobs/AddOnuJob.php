@@ -78,9 +78,7 @@ class AddOnuJob extends BaseTaskJob
         $siteId = $task['siteId'];
         $task['deviceUuid'] = $deviceUuid;
 
-        $task['admin_username'] = config('services.onu_password.admin.username');
         $task['admin_password'] = config('services.onu_password.admin.password');
-        $task['client_username'] = config('services.onu_password.user.username');
         $task['client_password'] = config('services.onu_password.user.password');
 
 

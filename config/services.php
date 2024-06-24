@@ -49,11 +49,9 @@ return [
 
     'onu_password' => [
         'admin' => [
-            'username' => env('ONU_ADMIN_USERNAME'),
             'password' => env('ONU_ADMIN_PASSWORD'),
         ],
         'user' => [
-            'username' => env('ONU_CLIENT_USERNAME'),
             'password' => env('ONU_CLIENT_PASSWORD'),
         ],
     ],
