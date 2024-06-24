@@ -147,6 +147,6 @@ class AddOnuJob extends BaseTaskJob
             ]);
         }
 
-        $this->reportCompletion(3,['ssid'=>$task['wifiName'],'password' => $task['wifiPassword']]);
+        $this->reportCompletion(3,['ssid'=>$task['wifiName'],'password' => $task['wifiPassword'], 'datas' => $task]);
     }
 }
