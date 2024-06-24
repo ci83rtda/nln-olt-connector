@@ -98,7 +98,7 @@ class OltHelper
         }
         $oltConnector->executeCommand("onu $onuId pri username admin_control enable {$params['admin_username']} {$params['admin_password']} user_control enable {$params['client_username']} {$params['client_password']}", false);
         $oltConnector->executeCommand("onu $onuId pri firewall level middle", false);
-        $oltConnector->executeCommand("onu $onuId pri acl ping control disable lan enable wan enable ipv4_control disable ipv6_control disable", false);
+        $oltConnector->executeCommand("onu $onuId pri acl ping control enable lan enable wan enable ipv4_control disable ipv6_control disable", false);
         $oltConnector->executeCommand("onu $onuId pri catv {$params['catv']}", false);
         $oltConnector->executeCommand('exit', false);
         $oltConnector->executeCommand('write memory', false);
