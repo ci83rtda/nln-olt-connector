@@ -50,12 +50,12 @@ class OltHelper
     public static function addOnu($oltConnector, $onuId, $serialNumber, $params)
     {
         // Determine the ONU type based on the serial number
-        $onuType = self::determineOnuType($serialNumber);
+        //$onuType = self::determineOnuType($serialNumber);
 
         // Add the new ONU with the appropriate commands based on the ONU type
-        if ($onuType === 'vsol') {
+        if ($params['brand'] === 'Vsol') {
             self::addVsolOnu($oltConnector, $onuId, $serialNumber, $params);
-        } elseif ($onuType === 'huawei') {
+        } elseif ($params['brand'] === 'Huawei') {
             self::addHuaweiOnu($oltConnector, $onuId, $serialNumber, $params);
         }
     }
@@ -85,10 +85,17 @@ class OltHelper
         $oltConnector->executeCommand("onu $onuId pri wan_adv index 1 route mode internet mtu 1500", false);
         $oltConnector->executeCommand("onu $onuId pri wan_adv index 1 route ipv4 static ip {$params['ip']} mask {$params['mask']} gw {$params['gw']} dns master {$params['dns_master']} slave {$params['dns_slave']} nat enable", false);
         $oltConnector->executeCommand("onu $onuId pri wan_adv index 1 vlan tag wan_vlan {$params['vlanid']} 0", false);
-        $oltConnector->executeCommand("onu $onuId pri wan_adv index 1 bind lan1 lan2 ssid1 ssid2 ssid3 ssid4 ssid5 ssid6 ssid7 ssid8", false);
-        $oltConnector->executeCommand("onu $onuId pri wifi_switch 1 enable fcc auto 80211acANAC 20 40", false);
-        $oltConnector->executeCommand("onu $onuId pri wifi_ssid 1 name {$params['wifi_ssid']} hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$params['shared_key']} rekey_interval 0", false);
-        $oltConnector->executeCommand("onu $onuId pri wifi_ssid 5 name {$params['wifi_ssid']} hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$params['shared_key']} rekey_interval 0", false);
+        if ($params['modelSelection'] == 'v452') {
+            $oltConnector->executeCommand("onu $onuId pri wan_adv index 1 bind lan1 lan2 ssid1 ssid2 ssid3 ssid4 ssid5 ssid6 ssid7 ssid8", false);
+            $oltConnector->executeCommand("onu $onuId pri wifi_switch 1 enable fcc auto 80211acANAC 20 40", false);
+            $oltConnector->executeCommand("onu $onuId pri wifi_switch 2 enable fcc channel 0 80211bgn 20 20/40", false);
+            $oltConnector->executeCommand("onu $onuId pri wifi_ssid 1 name {$params['wifi_ssid']} hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$params['shared_key']} rekey_interval 0", false);
+            $oltConnector->executeCommand("onu $onuId pri wifi_ssid 5 name {$params['wifi_ssid']} hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$params['shared_key']} rekey_interval 0", false);
+        }elseif ($params['modelSelection'] == 'v642'){
+            $oltConnector->executeCommand("onu $onuId pri wan_adv index 1 bind lan1 lan2 ssid1 ssid2 ssid3 ssid4", false);
+            $oltConnector->executeCommand("onu $onuId pri wifi_switch 1 enable fcc channel 0 80211bgn 20 20/40", false);
+            $oltConnector->executeCommand("onu $onuId pri wifi_ssid 1 name {$params['wifi_ssid']} hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$params['shared_key']} rekey_interval 0", false);
+        }
         $oltConnector->executeCommand("onu $onuId pri firewall level low", false);
         $oltConnector->executeCommand("onu $onuId pri acl ping control enable lan enable wan enable ipv4_control disable ipv6_control disable", false);
         $oltConnector->executeCommand("onu $onuId pri catv {$params['catv']}", false);
@@ -106,8 +113,8 @@ class OltHelper
         $oltConnector->executeCommand("onu $onuId service ser_1 gemport 1 vlan {$params['vlanid']}", false);
         $oltConnector->executeCommand("onu $onuId service-port 1 gemport 1 uservlan {$params['vlanid']} vlan {$params['vlanid']}", false);
         $oltConnector->executeCommand("onu $onuId portvlan veip 1 mode transparent", false);
-        if (isset($params['video'])) {
-            $oltConnector->executeCommand("onu $onuId video 1 state {$params['video']} power disable", false);
+        if ($params['modelSelection'] == 'EG8143H5') {
+            $oltConnector->executeCommand("onu $onuId video 1 state {$params['catv']} power disable", false);
         }
         $oltConnector->executeCommand('exit', false);
         $oltConnector->executeCommand('write memory', false);
