@@ -114,7 +114,7 @@ class AddOnuJob extends BaseTaskJob
         try {
             $this->uispApi->createBlackboxDevice($blacboxDevice);
         }catch (\Exception $exception){
-            Log::error('Error adding ONU: ' . $exception->getMessage());
+            Log::error('Error adding blackbox: ' . $exception->getMessage());
             $this->reportCompletion(4, ['message' => $exception->getMessage()]);
             return;
         }
