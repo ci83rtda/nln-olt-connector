@@ -115,6 +115,18 @@ class AddOnuJob extends BaseTaskJob
             $this->uispApi->createBlackboxDevice($blacboxDevice);
         }catch (\Exception $exception){
             $this->reportCompletion(4, ['message' => $exception->getMessage()]);
+            return;
+        }
+
+
+        try {
+            Log::info('Attempting to connect to OLT');
+            $oltConnector->addOnu($port, $serialNumber, $task);
+            Log::info('Connected to OLT, adding ONU');
+        } catch (\Exception $e) {
+            Log::error('Error adding ONU: ' . $e->getMessage());
+            $this->reportCompletion(4, ['message' => $e->getMessage()]);
+            return;
         }
 
         if (in_array($task['catvServiceStatus'],[0,4,7,8]) && $task['activateCatv']){
@@ -129,17 +141,6 @@ class AddOnuJob extends BaseTaskJob
                 'activeFrom' => now()->timezone('America/Bogota')->format('Y-m-d\TH:i:sO'),
                 'invoicingStart' => now()->timezone('America/Bogota')->format('Y-m-d\TH:i:sO')
             ]);
-        }
-
-
-        try {
-            Log::info('Attempting to connect to OLT');
-            $oltConnector->addOnu($port, $serialNumber, $task);
-            Log::info('Connected to OLT, adding ONU');
-        } catch (\Exception $e) {
-            Log::error('Error adding ONU: ' . $e->getMessage());
-            $this->reportCompletion(4, ['message' => $e->getMessage()]);
-
         }
 
         $this->reportCompletion(3,['ssid'=>$task['wifiName'],'password' => $task['wifiPassword']]);
