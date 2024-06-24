@@ -96,8 +96,9 @@ class OltHelper
             $oltConnector->executeCommand("onu $onuId pri wifi_switch 1 enable fcc channel 0 80211bgn 20 20/40", false);
             $oltConnector->executeCommand("onu $onuId pri wifi_ssid 1 name {$params['wifi_ssid']} hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$params['shared_key']} rekey_interval 0", false);
         }
+        $oltConnector->executeCommand("onu $onuId pri username admin_control enable {$params['admin_username']} {$params['admin_password']} user_control enable {$params['client_username']} {$params['client_password']}", false);
         $oltConnector->executeCommand("onu $onuId pri firewall level low", false);
-        $oltConnector->executeCommand("onu $onuId pri acl ping control enable lan enable wan enable ipv4_control disable ipv6_control disable", false);
+        $oltConnector->executeCommand("onu $onuId pri acl ping control disable lan enable wan enable ipv4_control disable ipv6_control disable", false);
         $oltConnector->executeCommand("onu $onuId pri catv {$params['catv']}", false);
         $oltConnector->executeCommand('exit', false);
         $oltConnector->executeCommand('write memory', false);

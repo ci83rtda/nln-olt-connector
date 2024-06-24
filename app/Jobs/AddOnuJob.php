@@ -42,15 +42,15 @@ class AddOnuJob extends BaseTaskJob
 
         if ($task['modelSelection'] == 'v452'){
             $task['model'] = 'VSOLV452';
-            $task['catv'] = $task['hasPendingCatv'] ? 'enable' : 'disable';
+            $task['catv'] = $task['activateCatv'] == 'true' ? 'enable' : 'disable';
         }elseif ($task['modelSelection'] == 'v642'){
             $task['model'] = 'VSOLV642';
-            $task['catv'] = $task['hasPendingCatv'] ? 'enable' : 'disable';
+            $task['catv'] = $task['activateCatv']  == 'true' ? 'enable' : 'disable';
         }elseif ($task['modelSelection'] == 'EG8145V5'){
             $task['model'] = 'EG8145V5';
         }elseif ($task['modelSelection'] == 'EG8143H5'){
             $task['model'] = 'EG8143H5';
-            $task['catv'] = $task['hasPendingCatv'] ? 'unlock' : 'lock';
+            $task['catv'] = $task['activateCatv'] == 'true' ? 'unlock' : 'lock';
         }
 
         $task['description'] = $task['onuDescription'];
@@ -78,8 +78,11 @@ class AddOnuJob extends BaseTaskJob
         $siteId = $task['siteId'];
         $task['deviceUuid'] = $deviceUuid;
 
-//                $this->reportCompletion(5, $task);
-//                return;
+        $task['admin_username'] = config('services.onu_password.admin.username');
+        $task['admin_password'] = config('services.onu_password.admin.password');
+        $task['client_username'] = config('services.onu_password.user.username');
+        $task['client_password'] = config('services.onu_password.user.password');
+
 
         $blacboxDevice = [
             'deviceId' => $deviceUuid,
