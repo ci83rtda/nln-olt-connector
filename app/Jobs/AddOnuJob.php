@@ -81,6 +81,7 @@ class AddOnuJob extends BaseTaskJob
         $task['admin_password'] = config('services.onu_password.admin.password');
         $task['client_password'] = config('services.onu_password.user.password');
 
+        $blacboxNote = "FTTH CPE\nWifi: {$task['wifiName']}\nContraseña: {$task['wifiPassword']}";
 
         $blacboxDevice = [
             'deviceId' => $deviceUuid,
@@ -99,7 +100,7 @@ class AddOnuJob extends BaseTaskJob
                 "model" => "blackbox"
             ],
             "snmpCommunity" => "public",
-            "note" => "Fiber CPE",
+            "note" => $blacboxNote,
             "interfaces" => [
                 [
                     "id" => "eth0",
