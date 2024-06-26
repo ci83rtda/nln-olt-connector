@@ -61,10 +61,10 @@ abstract class BaseTaskJob implements ShouldQueue
             Log::info("Un error ocurrio:  {$connectionException->getMessage()}.");
         }
 
-        if ($apiResponse->successful()) {
-            Log::info("Task completion reported for request ID {$this->task['id']}.");
-        } else {
-            Log::error("Failed to report task completion for request ID {$this->task['id']}.");
-        }
+//        if ($apiResponse->successful()) {
+//            Log::info("Task completion reported for request ID {$this->task['id']}.");
+//        } else {
+//            Log::error("Failed to report task completion for request ID {$this->task['id']}.");
+//        }
     }
 }

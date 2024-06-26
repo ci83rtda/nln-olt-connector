@@ -116,18 +116,18 @@ class AddOnuJob extends BaseTaskJob
         try {
             $this->uispApi->createBlackboxDevice($blacboxDevice);
         }catch (\Exception $exception){
-            Log::error('Error adding blackbox: ' . $exception->getMessage());
+//            Log::error('Error adding blackbox: ' . $exception->getMessage());
             $this->reportCompletion(4, ['message' => $exception->getMessage()]);
             return;
         }
 
 
         try {
-            Log::info('Attempting to connect to OLT');
+//            Log::info('Attempting to connect to OLT');
             $oltConnector->addOnu($port, $serialNumber, $task);
-            Log::info('Connected to OLT, adding ONU');
+//            Log::info('Connected to OLT, adding ONU');
         } catch (\Exception $e) {
-            Log::error('Error adding ONU: ' . $e->getMessage());
+//            Log::error('Error adding ONU: ' . $e->getMessage());
             $this->reportCompletion(4, ['message' => $e->getMessage()]);
             return;
         }

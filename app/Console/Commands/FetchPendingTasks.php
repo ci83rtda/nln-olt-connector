@@ -53,10 +53,10 @@ class FetchPendingTasks extends Command
             }
 
             $this->info('Pending tasks fetched and dispatched.');
-            Log::info('Pending tasks fetched and dispatched.');
+//            Log::info('Pending tasks fetched and dispatched.');
         } else {
             $this->error('Failed to fetch pending tasks.');
-            Log::error('Failed to fetch pending tasks.');
+//            Log::error('Failed to fetch pending tasks.');
         }
 
         return 0;
