@@ -36,7 +36,7 @@ class OltConnector
 
     public function executeCommand($command, $expectOutput = true)
     {
-        Log::info("Executing command: $command");
+//        Log::info("Executing command: $command");
         $this->ssh->write("$command\n");
         $output = '';
 
@@ -51,7 +51,7 @@ class OltConnector
                     break;
                 }
             }
-            Log::info("Command response: $output");
+//            Log::info("Command response: $output");
             return $output;
         } else {
             // Wait until the prompt returns
@@ -65,7 +65,7 @@ class OltConnector
                     break;
                 }
             }
-            Log::info("Command response: $output");
+//            Log::info("Command response: $output");
             return '';
         }
     }
@@ -133,7 +133,7 @@ class OltConnector
         // Check if we are already in enable mode
         $prompt = $this->ssh->read('/(#|>|\(config\))\s*/', SSH2::READ_REGEX);
         if (strpos($prompt, '(config)') !== false || strpos($prompt, '#') !== false) {
-            Log::info("Already in enable mode.");
+//            Log::info("Already in enable mode.");
             return;
         }
 
@@ -180,7 +180,7 @@ class OltConnector
         $this->executeCommand('exit', false);
         $this->executeCommand('write memory', false);
 
-        Log::info("Set CATV status for ONU $onuId on port $port to $newStatus.");
+//        Log::info("Set CATV status for ONU $onuId on port $port to $newStatus.");
     }
 
 
@@ -215,7 +215,7 @@ class OltConnector
         // Exit configuration mode
         $this->executeCommand('exit', false);
 
-        Log::info("Retrieved WiFi details for ONU $onuId on port $port.");
+//        Log::info("Retrieved WiFi details for ONU $onuId on port $port.");
 
         if (empty($details['wifi_switch']) && empty($details['ssid'])) {
             return $asJson ? json_encode(['error' => 'No data found or device not compatible.']) : 'No data found or device not compatible.';
@@ -242,20 +242,20 @@ class OltConnector
 
         // Get optical information
         $opticalOutput = $this->executeCommand("show onu $onuId optical_info", true);
-        Log::info("Optical Info Output: $opticalOutput");
+//        Log::info("Optical Info Output: $opticalOutput");
         $parsedOpticalInfo = OltHelper::parseOpticalInfo($opticalOutput);
         $status['optical_info'] = $parsedOpticalInfo;
 
         // Get distance information
         $distanceOutput = $this->executeCommand("show onu $onuId distance", true);
-        Log::info("Distance Output: $distanceOutput");
+//        Log::info("Distance Output: $distanceOutput");
         $parsedDistance = OltHelper::parseDistance($distanceOutput);
         $status['distance'] = $parsedDistance;
 
         // Exit configuration mode
         $this->executeCommand('exit', false);
 
-        Log::info("Retrieved status for ONU $onuId on port $port.");
+//        Log::info("Retrieved status for ONU $onuId on port $port.");
 
         if (empty($status['optical_info']) && $status['distance'] === null) {
             return $asJson ? json_encode(['error' => 'No data found or device not compatible.']) : 'No data found or device not compatible.';

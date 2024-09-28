@@ -27,7 +27,7 @@ class HandleTaskCompletion
         ]);
 
         if ($response->successful()) {
-            Log::info("Task completion reported for request ID {$event->requestId}.");
+//            Log::info("Task completion reported for request ID {$event->requestId}.");
         } else {
             Log::error("Failed to report task completion for request ID {$event->requestId}.");
         }
