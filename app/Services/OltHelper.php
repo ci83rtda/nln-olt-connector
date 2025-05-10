@@ -91,6 +91,12 @@ class OltHelper
             $oltConnector->executeCommand("onu $onuId pri wifi_switch 2 enable fcc channel 0 80211bgn 20 20/40", false);
             $oltConnector->executeCommand("onu $onuId pri wifi_ssid 1 name {$params['wifi_ssid']} hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$params['shared_key']} rekey_interval 0", false);
             $oltConnector->executeCommand("onu $onuId pri wifi_ssid 5 name {$params['wifi_ssid']} hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$params['shared_key']} rekey_interval 0", false);
+        }elseif ($params['modelSelection'] == 'D554') {
+            $oltConnector->executeCommand("onu $onuId pri wan_adv index 1 bind lan1 lan2 lan3 lan4 ssid1 ssid2 ssid3 ssid4 ssid5 ssid6 ssid7 ssid8", false);
+            $oltConnector->executeCommand("onu $onuId pri wifi_switch 1 enable fcc auto 80211acANAC 20 40", false);
+            $oltConnector->executeCommand("onu $onuId pri wifi_switch 2 enable fcc channel 0 80211bgn 20 20/40", false);
+            $oltConnector->executeCommand("onu $onuId pri wifi_ssid 1 name {$params['wifi_ssid']} hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$params['shared_key']} rekey_interval 0", false);
+            $oltConnector->executeCommand("onu $onuId pri wifi_ssid 5 name {$params['wifi_ssid']} hide disable auth_mode wpa2psk encrypt_type tkipaes shared_key {$params['shared_key']} rekey_interval 0", false);
         }elseif ($params['modelSelection'] == 'v642'){
             $oltConnector->executeCommand("onu $onuId pri wan_adv index 1 bind lan1 lan2 ssid1 ssid2 ssid3 ssid4", false);
             $oltConnector->executeCommand("onu $onuId pri wifi_switch 1 enable fcc channel 0 80211bgn 20 20/40", false);
@@ -126,7 +132,7 @@ class OltHelper
     {
         // Get current WiFi switch settings
         $wifiSwitchSettings = [];
-        if ($model === 'V452') {
+        if ($model === 'V452' || $model === 'D554') {
             $output = $oltConnector->executeCommand("show onu $onuId pri wifi_switch");
             $wifiSwitchSettings = self::parseV452WifiSwitchState($output);
         } else { // For V642
@@ -185,7 +191,7 @@ class OltHelper
         foreach ($wifiSwitchSettings as $switch => $state) {
             if ($state !== 'no change') {
                 if ($state === 'enable') {
-                    if ($model === 'V452') {
+                    if ($model === 'V452' || $model === 'D554') {
                         $command = ($switch === 1) ?
                             "onu $onuId pri wifi_switch 1 enable fcc auto 80211ac0 20 40" :
                             "onu $onuId pri wifi_switch 2 enable fcc channel 0 80211bgn 20";

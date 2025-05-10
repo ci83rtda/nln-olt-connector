@@ -46,6 +46,9 @@ class AddOnuJob extends BaseTaskJob
         }elseif ($task['modelSelection'] == 'v642'){
             $task['model'] = 'VSOLV642';
             $task['catv'] = $task['activateCatv']  == 'true' ? 'enable' : 'disable';
+        }elseif ($task['modelSelection'] == 'D554'){
+            $task['model'] = 'VSOLD554';
+            $task['catv'] = $task['activateCatv']  == 'true' ? 'enable' : 'disable';
         }elseif ($task['modelSelection'] == 'EG8145V5'){
             $task['model'] = 'EG8145V5';
         }elseif ($task['modelSelection'] == 'EG8143H5'){

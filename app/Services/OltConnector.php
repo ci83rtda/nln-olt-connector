@@ -158,6 +158,7 @@ class OltConnector
 
         switch ($model) {
             case 'V452':
+            case 'D554':
             case 'V642':
                 $command = "onu $onuId pri catv $newStatus";
                 break;

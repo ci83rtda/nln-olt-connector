@@ -114,7 +114,7 @@ class AddOnu extends Command
 
         if ($onuType === 'vsol') {
             $vendorName = 'Vsol';
-            $params['model'] = $this->choice('Enter the model number',['V452','V642'],'V452');
+            $params['model'] = $this->choice('Enter the model number',['V452','V642','D554'],'V452');
             $params['ip'] = $this->askWithValidation('Enter the static IP address');
             $params['mask'] = $this->getSubnetMask($mascara = $this->askWithValidation('Enter the subnet mask. , 24'));
             $params['gw'] = $this->askWithValidation('Enter the gateway IP address');
@@ -147,6 +147,8 @@ class AddOnu extends Command
             $params['model'] = 'VSOLV452';
         }elseif ( $params['model'] == 'V642'){
             $params['model'] = 'VSOLV642';
+        }elseif ( $params['model'] == 'D554'){
+            $params['model'] = 'VSOLD554';
         }
 
         $blacboxDevice = $this->blackBox([
